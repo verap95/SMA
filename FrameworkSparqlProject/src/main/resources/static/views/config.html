@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>SPARQL Test Home</title>
+<link rel="stylesheet" href="css/lib/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css"
+	integrity="sha256-ULjuiZ9iqqf97EETp/mZrnLusfOwISiI6AIL0IXShbc="
+	crossorigin="anonymous" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css"
+	integrity="sha256-PF6MatZtiJ8/c9O9HQ8uSUXr++R9KBYu4gbNG5511WE="
+	crossorigin="anonymous" />
+<link rel="stylesheet" href="css/lib/angular-ui-tree.min.css" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<link rel="stylesheet" type="text/css" href="css/config.css" />
+</head>
+<body ng-app="SparqlFramework">
+	<div ng-controller="ConfigController" style="height:100%">
+		<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#516abd">
+			<a class="navbar-brand">Configuração de um novo mapeamento</a>
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown">Exportar</a>
+						<div class="dropdown-menu" aria-labelledby="navbardrop">
+							<a class="dropdown-item" ng-click="exportAllAMs()" style="cursor:pointer"> Lista de Assertivas</a>
+							<a class="dropdown-item" ng-click="exportAllMappingRules()" style="cursor:pointer">Lista de Regras de Mapeamento</a>
+							<a class="dropdown-item" ng-click="exportAllMappingSPARQL()" style="cursor:pointer">Lista de Mapeamentos SPARQL</a>
+						</div>
+					</li>
+					<li class="nav-item" style="cursor:pointer">
+						<a class="nav-link" ng-click="loadAllAssertives()" data-toggle="modal" data-target="#loadAllAssertives" style="cursor:pointer">Obter resultados</a>
+					</li>
+					<li class="nav-item" style="cursor:pointer">
+						<a class="nav-link" data-toggle="modal" data-target="#loadHelp">Ajuda</a>
+					</li>
+					
+				</ul>
+			</div>
+		</nav>
+		
+		<div class="container-fluid" style="height: 90%; align: center;">
+			<div class="row" style="height: 100%;">
+				<div class="col-md-3" style="height: 100%; padding-top: 1%; padding-bottom: 1%;">
+					<div class="card border-primary"
+						style="border: 1px solid black; height: 100%;">
+						<h4 class="card-title" style="text-align: center; padding: 2%;">Ontologia
+							Alvo</h4>
+						<div id="default-tree"></div>
+					</div>
+				</div>
+
+			<div class="col-md-9"
+				style="height: 100%; padding-top: 1%; padding-bottom: 1%;">
+				<div class="card border-primary"
+					style="border: 1px solid black; width: 100%; height: 100%">
+					<h4 class="card-title" style="text-align: center;">Edição de mapeamentos</h4>
+					<div class="row" style="padding-bottom: 1%; height: 10%;">
+						<div class="col-md-12" style="text-align: center">
+							<button class="btn btn-primary" ng-click="loadSource()" ng-disabled="flgLoad == false || flgFull == true" data-toggle="modal"
+								data-target="#loadSourceModal">Ontologia Fonte</button>
+							<button class="btn btn-secondary" ng-click="loadFilter()" data-toggle="modal" data-target="#filterModal" ng-disabled="flgFilter == false">Filtros</button>
+							<button class="btn btn-secondary" ng-click="loadTransform()" data-toggle="modal" data-target="#functionModal" ng-disabled="flgFilter == false">Funções
+								de Transformação</button>
+						</div>
+					</div>
+					<div class="row" style="padding-left: 5%; height: 45%;">
+						<h5>Assertiva de Mapeamento:</h5>
+						<div class="col-md-12">
+							<input type="text" style="width: 85%; height: 100%"
+								ng-model="inputMA" />
+							<button class="btn btn-primary" style="margin-top: -0.5%"
+								ng-click="saveMap()" ng-disabled="inputMA == null">Adicionar</button>
+						</div>
+						<div class="col-md-12">
+							<div class="card" style="width: 95%; height: 100px; border: 1px solid grey; margin-top: 1%">
+								<div class="card-body">
+									<p ng-repeat="x in assertives" class="align-middle">
+										<button style="border: none; background-color: none; background-color: transparent;"
+											ng-click="loadMappingSPARQL(x.mapSPARQL, x.mapRules)">{{x.text}}
+										</button>
+										<button style="float:right; margin-right: 0px;" class="btn btn-danger btn-sm" ng-click="removeAssertive(x)">Remover</button>
+									</p>
+								</div>	
+									
+							</div>
+						</div>
+					</div>
+
+					<div class="container" style="width:94%; padding-top: 2%; height: 45%;">
+						<ul class="nav nav-tabs">
+							<li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#mappingSPARQL">Mapeamento SPARQL</a> </li>
+							<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#mappingRules">Regras de Mapeamento</a></li>
+						</ul>
+						<div class="tab-content">
+							<div id="mappingSPARQL" class="tab-pane fade show active">
+								<div style="height: 150px; border: 1px solid grey">
+									<p>{{mapeamentoSPARQL}}</p>
+	 							</div>
+							</div>
+							<div id="mappingRules" class="tab-pane fade">
+								<div style="height: 150px; border: 1px solid grey">
+									<p>{{regrasMapeamento}}</p>
+	 							</div>
+							</div>
+						</div>
+
+<!-- 						<h5>Mapeamento SPARQL:</h5> -->
+<!-- 						<div class="col-md-12"> -->
+<!-- 							<div style="width: 95%; height: 150px; border: 1px solid grey"> -->
+<!-- 								<p>{{mapeamento}}</p> -->
+
+<!-- 							</div> -->
+<!-- 						</div> -->
+					</div>
+					
+					
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="modal" id="loadSourceModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Ontologia Fonte</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div id="treeSource"></div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="newAssertive()"
+							ng-disabled="nameS == null">Selecionar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="filterModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Filtros</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-5">
+										<h6>Propriedades</h6>
+										<select class="custom-select" ng-model="valueProp">
+											<option ng-repeat="prop in properties" value="{{valueProp = prop.text}}">{{prop.text}}</option>
+										</select>	
+									</div>
+									<div class="col-sm-3">
+										<h6>Operador</h6>
+										<select class="custom-select" ng-model="valueOperator">
+											<option value=">">></option>
+											<option value="=>">=></option>
+											<option value="<"><</option>
+											<option value="<="><=</option>
+											<option value="=">=</option>
+											<option value="!=">!=</option>
+										</select>
+									</div>	
+									<div class="col-sm-4">
+										<h6>Valor</h6>
+										<div class="input-group mb-3">
+								  			<input type="text" class="form-control" ng-model="value">
+										</div>
+									</div>
+								</div>
+							</div>	
+						</div>
+						<div class="row" style="align-items: center;">
+							<div class="col-sm-12">
+								<h6>Filtro aplicado</h6>
+								<div class="input-group mb-3">
+								  <input type="text" class="form-control" ng-focus="applyValue()" ng-model="valueFilter">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="newFilter()">Selecionar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>	
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="functionModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Funções de Transformação</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-6">
+										<h6>Tipos de Função</h6>
+										<select class="custom-select" ng-model="typeOfFunction" ng-change="getTypeFunction()">
+											<option value="String">De String</option>
+											<option value="Data">De Data</option>
+										</select>	
+									</div>
+									<div class="col-sm-6">
+										<h6>Lista de Funçóes</h6>
+										<select class="custom-select" ng-model="valueOfFunction">
+											<option ng-repeat="f in functionList" ng-value="f">{{f}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6" ng-show="typeOfFunction == 'String'">
+										<h6>Propriedades</h6>
+										<select class="custom-select" ng-model="prop1">
+											<option ng-repeat="p in propList" ng-value="p">{{p}}</option>
+<!-- 											<option value="startCareer">startCareer</option> -->
+<!-- 											<option value="endCareer">endCareer</option> -->
+										</select>	
+									</div>
+									<div class="col-sm-6" ng-show="typeOfFunction == 'String'">
+										<h6>Propriedades</h6>
+										<select class="custom-select" ng-model="prop2">
+											<option ng-repeat="p in propList" ng-value="p">{{p}}</option>
+										</select>	
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<h6>Valor</h6>
+										<div class="input-group mb-3">
+								  			<input type="text" class="form-control" ng-model="valueFunc">
+										</div>
+									</div>
+								</div>	
+							</div>
+						</div>
+						<div class="row" style="align-items: center;">
+							<div class="col-sm-12">
+								<h6>Função de Transformação aplicada</h6>
+								<div class="input-group mb-3">
+								  <input type="text" class="form-control" ng-focus="applyValueFunction()" ng-model="valueFunction">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="newFunction()">Selecionar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>	
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="loadAllAssertives">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Listagem das Assertivas</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+<!-- 						<div id="allAssertives"></div> -->
+						<div class="row" ng-repeat="a in allList">
+							<div class="col-sm-9">
+								<p>{{a.mapAssertive}}</p>
+							</div>
+							<div class="col-sm-3">
+								<button class="btn btn-danger btn-sm" ng-click="removeAssertiveInList(a)">Remover</button>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="continue()" ng-disabled="allList.length == 0">Continuar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="loadHelp">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Ajuda</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div id="treeSource"></div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-click="newAssertive()"
+							ng-disabled="nameS == null">Selecionar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="errorMap">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Erro na criação de mapeamento</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>{{descError}}</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"
+	integrity="sha256-rmZZb5ESAjCE4Al5RfENzQBpw1VbShzLes76aW8c+kc="
+	crossorigin="anonymous"></script>
+<script src="js/lib/angular.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/factory/DataFactory.js"></script>
+<script src="js/controller/ConfigController.js"></script>
+</html>
