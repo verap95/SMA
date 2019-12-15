@@ -21,7 +21,7 @@ public class MappingRules {
 		return s;
 	}
 	
-	//MD1 - Mapeamento de Propriedades
+	//MD1/MO1 - Mapeamento de Propriedades
 	public String createPropertyMapping(String cSource, String pSource, String pTarget) {
 		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; " + pSource + "(s,v)";
 		return s;
@@ -30,6 +30,12 @@ public class MappingRules {
 	//MD2 - Mapeamento de Propriedades
 	public String createN1PropertyMapping(String cSource, String p1Source, String p2Source, String function, String pTarget) {
 		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; " + p1Source + "(s,v1) ; " + p2Source + "(s,v2) ; " + function;
+		return s;
+	}
+	
+	//MD3 - Mapeamento de Propriedades
+	public String createEmbedPropertyMapping(String cSource, String pSource, String pTarget) {
+		String s = pTarget + "(u,z) ← " + cSource +"(s); " + pSource + "(s,z) ; concat(s, xpath:encode-for-uri(z), u)";
 		return s;
 	}
 	

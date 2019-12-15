@@ -33,24 +33,27 @@ public class ModuleCRM {
 	 * @param flgProp
 	 * @return mapRule - String que contém a regra de mapeamento correspondente
 	 */
-	public String saveMappingRule(TempAssertive input, String classeSource, Boolean flgProp) {
+	public String saveMappingRule(TempAssertive input, String classeSource, Boolean flgProp, Boolean flgMPC) {
 		String mapRule = null;
 		if (input.getTypeT().equals("C") && input.getTypeS().equals("C")) {
 			mapRule = mp.createClassMappingRule(input.getNameT(), input.getNameS());
 		} else if (input.getTypeT().equals("C") && !input.getTypeS().equals("C")) {
 			mapRule = mp.createClassToPropertyMappingRule(input.getNameT(), input.getNameS(), classeSource);
 		} else if (input.getTypeT().equals("D") && input.getTypeS().equals("D")) {
-			if(!flgProp)
-				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());
-			else { //Padrão MD2
+			if(flgProp) { //Padrão MD2
 				Propriedades pS = propService.findById(input.getP1S());
 				mapRule = mp.createN1PropertyMapping(classeSource, 
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getNameS(), 
 							input.getFuncValue(),input.getNameT());
-			}
-				
+			}else if(flgMPC)//Padrão MD3
+				mapRule = mp.createEmbedPropertyMapping(classeSource, input.getNameS(), input.getNameT());
+			else
+				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());				
 		} else if (input.getTypeT().equals("O") && input.getTypeS().equals("O")) {
-			mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());
+			if(flgMPC) //Padrão MO2
+				mapRule = "Ainda não implementado";
+			else
+				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());
 		}
 
 		if (input.getFilter() != null)

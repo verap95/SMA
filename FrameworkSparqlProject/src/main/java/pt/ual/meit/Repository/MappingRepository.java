@@ -23,6 +23,8 @@ public interface MappingRepository extends CrudRepository<Mapeamento, Integer>{
 	
 	Mapeamento findByClasseTargetIdAndClasseSourceId(Classe classeT, Classe classeS);
 	
+	Mapeamento findByClasseTargetIdAndPropriedadeSourceId(Classe classeT, Propriedades propS);
+	
 	List<Mapeamento> findByPropriedadeTargetId(Propriedades propriedade);
 	
 	List<Mapeamento> findByFlgBasic(Boolean flgBasic);

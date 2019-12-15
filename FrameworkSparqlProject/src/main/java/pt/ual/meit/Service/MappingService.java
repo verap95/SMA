@@ -53,7 +53,7 @@ public class MappingService {
 				if (mList.get(0).getFlgBasic() == true) 
 					deleteBasicMapping(mList.get(0));
 			}
-			mapeamentoEntity = new Mapeamento(classeTarget, classeSource, null, null, mapAssertive, 
+			mapeamentoEntity = new Mapeamento(classeTarget, classeSource, null, propSource, mapAssertive, 
 					mapSPARQL, mapRules, false, mapComment);
 		}
 		return mapeamentoEntity = mappingRepository.save(mapeamentoEntity);
@@ -121,8 +121,11 @@ public class MappingService {
 		mappingRepository.delete(m);
 	}
 
-	public Mapeamento findMapClasse(Classe classeT, Classe classeS) {
+	public Mapeamento findMapClasse(Classe classeT, Classe classeS, Propriedades propS) {
 		Mapeamento mapC = mappingRepository.findByClasseTargetIdAndClasseSourceId(classeT, classeS);
+		if(mapC == null) {
+			mapC = mappingRepository.findByClasseTargetIdAndPropriedadeSourceId(classeT, propS);
+		}
 		return mapC;
 	}
 }

@@ -30,7 +30,7 @@ public class ModuleCMS {
 	 * @param input - Objeto que contém todos os dados relativos a um mapeamento criado pelo utilizador.
 	 * @return mapRule - String que contém o mapeamento SPARQL correspondente
 	 */
-	public List<String> saveMapSPARQL(TempAssertive input, String classeSource, String classeTarget, Boolean flgProp) {
+	public List<String> saveMapSPARQL(TempAssertive input, String classeSource, Boolean flgProp, Boolean flgMPC) {
 		String mapComment = null;
 		String mapSPARQL = null;
 		List<String> getResult = new ArrayList<>();
@@ -57,7 +57,11 @@ public class ModuleCMS {
 					input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?s"));
 				}else
 					return null;					
-			}else { //Padrão MD1
+			}else if(flgMPC) { //Padrão MD3
+				mapComment = Constants.PADRAO_MD3;
+				mapSPARQL = ms.createEmbedPropertyMapping(input.getNameS(), input.getNameT(), classeSource);	
+			}
+			else{ //Padrão MD1
 				mapComment = Constants.PADRAO_MD1;
 				mapSPARQL = ms.createPropertyMapping(input.getNameS(), input.getNameT());
 			}

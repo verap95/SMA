@@ -69,6 +69,26 @@ public class SPARQLTemplates {
 		return s;
 	}
 	
+	// Padrão MD3 - Mapeamento de Propriedades
+	public String createEmbedPropertyMapping(String source, String target, String classeSource) {
+		String[] pS = source.split(":");
+		String[] pT = target.split(":");
+		String[] pCS = classeSource.split(":");
+
+		String s = "PREFIX " + pS[0] + ": <" + prefix.getPrefixes(pS[0]) + "> \n" + 
+				"PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n";
+
+		if (!pS[0].equals(pCS[0]))
+			s = s.concat("PREFIX " + pCS[0] + ": <" + prefix.getPrefixes(pCS[0]) + "> \n");
+
+		s += "CONSTRUCT { ?generatedURI " + target + " ?p . } \n" + 
+				"WHERE { ?SUBJ a " + classeSource + "; \n" +
+					source + " ?p queryExp \n"
+					+ "BIND( IRI(CONCAT(STR(?SUBJ), ENCODE_FOR_URI(?p))) AS ?generatedURI) }";
+
+		return s;
+	}
+		
 	// Adding Filters to existing mapping
 	public String addFilterToMapping(String filter, String mapSPARQL, String typeS, String typeT, String valuePropS) {
 		String f = " FILTER(" + filter + ")";

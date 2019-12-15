@@ -250,34 +250,35 @@ public class ConfigController {
 		if (!temp.getTypeS().equals("C") && !temp.getTypeT().equals("C")) { // Se não for mapeamento de classes
 			propT = propService.findById(temp.getIdT());
 			propS = propService.findById(temp.getIdS());
-			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse());
-			if (mapC == null)
+			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse(), propS);
+			if (mapC == null) 
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-
+			
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
 				System.out.println("IF correto - Padrão MC2");
-				mapRules = moduleCRM.saveMappingRule(temp, classeS, true);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, null, true);
-			}else {
-				mapRules = moduleCRM.saveMappingRule(temp, classeS, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, null, false);
+				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false);
+			}else if(mapC.getPropriedadeSourceId() != null) { //Padrões MD3 e MO2
+				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true);
+			}else{ //Padrões MD1 e MO1
+				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false);
 			}
-					
-			
 		} else {
 			if (!temp.getTypeS().equals("C")) { // Padrão MC2
 				propS = propService.findById(temp.getIdS());
 				classeTarget = classService.findById(temp.getIdT());
 				String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
-				mapRules = moduleCRM.saveMappingRule(temp, classeS, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, null, false);
+				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false);
 			} else { // Padrão MC1
 				classeSource = classService.findById(temp.getIdS());
 				classeTarget = classService.findById(temp.getIdT());
-				mapRules = moduleCRM.saveMappingRule(temp, null, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, null, null, false);
+				mapRules = moduleCRM.saveMappingRule(temp, null, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, null, false, false);
 			}
 
 		}
@@ -331,12 +332,32 @@ public class ConfigController {
 			if ((typeT.equals("D") || typeT.equals("O")) && (typeS.equals("D") || typeS.equals("O"))) {
 				pS = propService.findById(idS);
 				pT = propService.findById(idA);
-				a = MappingAssertive.createAssertiveMappingProperties(
-						Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
-						Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
-						Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-						Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
-				prop1S = idS;
+				
+				Mapeamento map = mapService.findMapClasse(pT.getClasse(),pS.getClasse(), pS);
+				if(map != null) {
+					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MD2 e MO1 
+						a = MappingAssertive.createAssertiveMappingProperties(
+								Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
+								Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+								Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+								Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+						prop1S = idS;
+					}else { //Padrões MD3 e MO2
+						if(pT.getType().equals("D") && pS.getType().equals("D"))
+							a = MappingAssertive.createEmbedPropertyMapping(
+									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
+									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
+									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+						else
+							a = "Não implementado";
+					}
+				}else
+					a = MappingAssertive.createAssertiveMappingProperties(
+							Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
+							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+							Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+							Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
 			} else if (typeT.equals("C") && typeS.equals("D")) {
 				cT = classService.findById(idA);
 				pS = propService.findById(idS);
