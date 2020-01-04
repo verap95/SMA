@@ -36,7 +36,7 @@ public class MappingService {
 		return mapeamentoEntity = mappingRepository.save(mapeamentoEntity);
 	}
 	
-	public Mapeamento createMapping(Classe classeTarget, Classe classeSource, Propriedades propTarget, Propriedades propSource, String mapAssertive, String mapSPARQL, String mapRules, String mapComment) {
+	public Mapeamento createMapping(Classe classeTarget, Classe classeSource, Propriedades propTarget, Propriedades propSource, String mapAssertive, String mapSPARQL, String mapRules, String mapComment, String clauseWhere, String clauseFilter) {
 		Mapeamento mapeamentoEntity;
 		List<Mapeamento> mList = null;
 		if (classeTarget == null) {
@@ -53,8 +53,8 @@ public class MappingService {
 				if (mList.get(0).getFlgBasic() == true) 
 					deleteBasicMapping(mList.get(0));
 			}
-			mapeamentoEntity = new Mapeamento(classeTarget, classeSource, null, propSource, mapAssertive, 
-					mapSPARQL, mapRules, false, mapComment);
+			mapeamentoEntity = new Mapeamento(classeTarget, classeSource, propSource, mapAssertive, 
+					mapSPARQL, mapRules, false, mapComment, clauseWhere, clauseFilter);
 		}
 		return mapeamentoEntity = mappingRepository.save(mapeamentoEntity);
 	}
@@ -114,7 +114,7 @@ public class MappingService {
 	}
 	
 	/*
-	 * Métodos para eliminar a assertiva básica 
+	 * Método para eliminar a assertiva básica 
 	 */
 	public void deleteBasicMapping(Mapeamento m) {
 		System.out.println("Estou a tentar eliminar a linha");
@@ -124,8 +124,13 @@ public class MappingService {
 	public Mapeamento findMapClasse(Classe classeT, Classe classeS, Propriedades propS) {
 		Mapeamento mapC = mappingRepository.findByClasseTargetIdAndClasseSourceId(classeT, classeS);
 		if(mapC == null) {
-			mapC = mappingRepository.findByClasseTargetIdAndPropriedadeSourceId(classeT, propS);
+			mapC = findByMapClasseProp(classeT, propS);
 		}
+		return mapC;
+	}
+	
+	public Mapeamento findByMapClasseProp(Classe classeT, Propriedades propS) {
+		Mapeamento mapC = mappingRepository.findByClasseTargetIdAndPropriedadeSourceId(classeT, propS);
 		return mapC;
 	}
 }

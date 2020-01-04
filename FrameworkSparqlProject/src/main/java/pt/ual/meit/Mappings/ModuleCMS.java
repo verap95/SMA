@@ -33,14 +33,22 @@ public class ModuleCMS {
 	public List<String> saveMapSPARQL(TempAssertive input, String classeSource, Boolean flgProp, Boolean flgMPC) {
 		String mapComment = null;
 		String mapSPARQL = null;
+		String clauseFilter = null;
+		String clauseWhere = null;
 		List<String> getResult = new ArrayList<>();
+		Mapeamento mapping = null;
+		String queryExp = null;
 		
 		if(input.getTypeT().equals("C") && input.getTypeS().equals("C")) { // Padrão MC1
 			mapComment = Constants.PADRAO_MC1;
 			mapSPARQL = ms.createClassMapping(input.getNameS(), input.getNameT(), input.getValuePropS());
+			queryExp = ms.setQueryExp(1, input.getValuePropS(), null, null, null);
+			clauseWhere = "a " + input.getNameS() + queryExp;
 		}else if(input.getTypeT().equals("C") && !input.getTypeS().equals("C")) { //Padrão MC2
 			mapComment = Constants.PADRAO_MC2;
 			mapSPARQL = ms.createClassToPropertyMapping(input.getNameS(), input.getNameT(), classeSource);
+			queryExp = ms.setQueryExp(1, input.getNameS(), null, null, null);
+			clauseWhere = "a " + classeSource + queryExp;
 		}else if(input.getTypeT().equals("D") && input.getTypeS().equals("D")) { //Padrões de Propriedades de Tipos de Dados
 			if(flgProp) { //Padrão MD2
 				Propriedades pS1 = propService.findById(input.getP1S());
@@ -63,7 +71,19 @@ public class ModuleCMS {
 			}
 			else{ //Padrão MD1
 				mapComment = Constants.PADRAO_MD1;
-				mapSPARQL = ms.createPropertyMapping(input.getNameS(), input.getNameT());
+				Propriedades pS = propService.findByNameAndPrefix(input.getNameS());
+				Propriedades pT = propService.findByNameAndPrefix(input.getNameT());
+				mapping = mapService.findMapClasse(pT.getClasse(), pS.getClasse(), pS);
+				String[] whereClause = mapping.getClauseWhere().split(";");
+				String[] propWhere;
+				String prop = null;
+				if(whereClause.length > 1) {
+					propWhere = whereClause[1].split(":");
+					if(propWhere[0].contentEquals(pS.getClasse().getPrefix()))
+						prop = propWhere[0];
+				}
+				queryExp = ms.setQueryExp(2, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS());
+				mapSPARQL = ms.createPropertyMapping(input.getNameS(), input.getNameT(), Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), prop);
 			}
 			
 			/* Adicionar funções de transformação */
@@ -72,20 +92,31 @@ public class ModuleCMS {
 			else
 				mapSPARQL = mapSPARQL.replace("functionExp", "");
 			
-		}else if(input.getTypeT().equals("O") && input.getTypeS().equals("O")) { //Padrões de Propriedades de Objetos
-			mapComment = Constants.PADRAO_MO1;
-			mapSPARQL = ms.createPropertyMapping(input.getNameS(), input.getNameT());
-			//Mapeamento MO1
+		}else if(input.getTypeT().equals("O") || input.getTypeS().equals("O")) { //Padrões de Propriedades de Objetos
+			if(!flgMPC) { //Padrão MO1
+				mapComment = Constants.PADRAO_MO1;
+				//mapSPARQL = ms.createPropertyMapping(input.getNameS(), input.getNameT());
+			}else {
+				mapComment = Constants.PADRAO_MO2;
+				mapSPARQL = ms.createEmbedObjectPropertyMapping(input.getNameS(), input.getNameT(), classeSource);
+			}
 		}
 		
 		/* Adicionar filtro aos mapeamentos */
-		if(input.getFilterS() != null)
-			mapSPARQL = ms.addFilterToMapping(input.getFilterS(), mapSPARQL, input.getTypeS(), input.getTypeT(), input.getValuePropS());
-		else
-			mapSPARQL = mapSPARQL.replace("queryExp", ".");
-		
+		if(input.getFilterS() != null) {
+			String[] map = ms.addFilterToMapping(input.getFilterS(), mapSPARQL, input.getTypeS(), input.getTypeT(), queryExp);
+			mapSPARQL = map[0];
+			clauseFilter = map[1];
+		}else {
+			if(!queryExp.equals(null)) 
+				mapSPARQL = mapSPARQL.replace("queryExp", queryExp);
+			else
+				mapSPARQL = mapSPARQL.replace("queryExp", ".");
+		}
 		getResult.add(mapComment);
 		getResult.add(mapSPARQL);
+		getResult.add(clauseWhere);
+		getResult.add(clauseFilter);
 		return getResult;
 	}
 	

@@ -38,7 +38,7 @@ public class MappingAssertive {
 		return s;
 	}
 	
-	//MD1 - Mapeamento de Propriedades
+	//MD1/MO1 - Mapeamento de Propriedades
 	public static String createAssertiveMappingProperties(String cS, String pS, String cT, String pT) {
 		String s = cT + " / " + pT + " ≡ " + cS + " / " + pS;
 		return s;
@@ -53,6 +53,12 @@ public class MappingAssertive {
 	//MD3 - Mapeamento de Propriedades
 	public static String createEmbedPropertyMapping(String cT, String pT, String cS, String pS) {
 		String s = cT + " / " + pT + " ≡ " + cS + " [" + pS + "] / " + pS;
+		return s;
+	}
+	
+	//MO2 - Mapeamento de Propriedades
+	public static String createEmbedObjectPropertyMapping(String cT, String pT, String cS, String pS) {
+		String s = cT + " / " + pT + " ≡ " + cS + " [" + pS + "] / NULL";
 		return s;
 	}
 }

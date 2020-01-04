@@ -33,7 +33,7 @@ public class MappingRules {
 		return s;
 	}
 	
-	//MD3 - Mapeamento de Propriedades
+	//MD3/MO2 - Mapeamento de Propriedades
 	public String createEmbedPropertyMapping(String cSource, String pSource, String pTarget) {
 		String s = pTarget + "(u,z) ← " + cSource +"(s); " + pSource + "(s,z) ; concat(s, xpath:encode-for-uri(z), u)";
 		return s;

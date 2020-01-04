@@ -51,7 +51,7 @@ public class ModuleCRM {
 				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());				
 		} else if (input.getTypeT().equals("O") && input.getTypeS().equals("O")) {
 			if(flgMPC) //Padrão MO2
-				mapRule = "Ainda não implementado";
+				mapRule = mp.createEmbedPropertyMapping(classeSource, input.getNameS(), input.getNameT());
 			else
 				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());
 		}

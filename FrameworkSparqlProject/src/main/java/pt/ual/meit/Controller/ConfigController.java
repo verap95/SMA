@@ -241,6 +241,8 @@ public class ConfigController {
 	@RequestMapping(value = "/saveAssertive", method = RequestMethod.POST, headers = "Accept=application/json")
 	public ResponseEntity<?> saveAssertive(@RequestBody TempAssertive temp) {
 		String mapRules = null;
+		String clauseWhere = null;
+		String clauseFilter = null;
 		Classe classeSource = null;
 		Classe classeTarget = null;
 		Propriedades propT = null;
@@ -280,6 +282,9 @@ public class ConfigController {
 				mapRules = moduleCRM.saveMappingRule(temp, null, false, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, null, false, false);
 			}
+			clauseWhere = mapResult.get(2);
+			if(mapResult.size() == 4)
+				clauseFilter = mapResult.get(3);
 
 		}
 
@@ -288,9 +293,10 @@ public class ConfigController {
 		
 		String mapComment = mapResult.get(0);
 		String mapSPARQL = mapResult.get(1);
+		
 
 		mapService.createMapping(classeTarget, classeSource, propT, propS, temp.getAssertive(), mapSPARQL, mapRules,
-				mapComment);
+				mapComment, clauseWhere, clauseFilter);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -335,13 +341,22 @@ public class ConfigController {
 				
 				Mapeamento map = mapService.findMapClasse(pT.getClasse(),pS.getClasse(), pS);
 				if(map != null) {
-					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MD2 e MO1 
-						a = MappingAssertive.createAssertiveMappingProperties(
+					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MD2, MO1 e MO2
+						Mapeamento mapC = mapService.findByMapClasseProp(pT.getClasse(), pS);
+						if(mapC != null) {
+							a = MappingAssertive.createEmbedObjectPropertyMapping(
+									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
+									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
+									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+						}else {
+							a = MappingAssertive.createAssertiveMappingProperties(
 								Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 								Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
 								Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 								Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
-						prop1S = idS;
+							prop1S = idS;
+						}
 					}else { //Padrões MD3 e MO2
 						if(pT.getType().equals("D") && pS.getType().equals("D"))
 							a = MappingAssertive.createEmbedPropertyMapping(
@@ -350,7 +365,11 @@ public class ConfigController {
 									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
 									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 						else
-							a = "Não implementado";
+							a = MappingAssertive.createEmbedObjectPropertyMapping(
+									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
+									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
+									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 					}
 				}else
 					a = MappingAssertive.createAssertiveMappingProperties(
@@ -371,25 +390,6 @@ public class ConfigController {
 				a = MappingAssertive.createAssertiveMappingClass(Constants.ATRIBUTOS(cS.getPrefix(), cS.getName()),
 						Constants.ATRIBUTOS(cT.getPrefix(), cT.getName()));
 			}
-
-			// if(typeT.equals("P") && typeS.equals("P")) {
-			// pS = propService.findByNameAndPrefix(nameS);
-			// pT = propService.findByNameAndPrefix(nameT);
-			//
-			// System.out.println("Classe name S: " + pS.getClasse().getName());
-			// String classS, classT;
-			// classS = pS.getClasse().getPrefix() + ":" + pS.getClasse().getName();
-			// classT = pT.getClasse().getPrefix() + ":" + pT.getClasse().getName();
-			//
-			// a = MappingAssertive.createAssertiveMappingProperties(classS, nameS, classT,
-			// nameT);
-			// }else if(typeT.equals("C") && typeS.equals("P")) {
-			// pS = propService.findByNameAndPrefix(nameS);
-			// String classS = pS.getClasse().getPrefix() + ":" + pS.getClasse().getName();
-			// a = MappingAssertive.createAssertiveMapClassProperty(classS, nameS, nameT);
-			// }else {
-			// a = MappingAssertive.criarAssertivaBasica(nameT, nameS);
-			// }
 		}
 
 		TempAssertive temp = new TempAssertive();

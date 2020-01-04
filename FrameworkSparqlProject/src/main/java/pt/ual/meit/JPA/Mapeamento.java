@@ -43,6 +43,10 @@ public class Mapeamento {
 	@JoinColumn(name = "propertyT_id", nullable = true)
 	private Propriedades propriedadeTargetId;
 	
+	private String clauseWhere;
+	
+	private String clauseFilter;
+	
 	protected Mapeamento() {
 	}
 
@@ -64,10 +68,27 @@ public class Mapeamento {
 		this.setMapComments(mapComments);
 	}
 
+	//Mapeamento de Classes
+	public Mapeamento(
+			Classe classeTargetId, Classe classeSourceId,  Propriedades propriedadeSourceId, String mapAssertive, String mapSPARQL, String mapRules, Boolean flgBasic,
+			String mapComments, String clauseWhere, String clauseFilter) {
+		super();
+		this.mapAssertive = mapAssertive;
+		this.mapSPARQL = mapSPARQL;
+		this.mapRules = mapRules;
+		this.flgBasic = flgBasic;
+		this.mapComments = mapComments;
+		this.classeTargetId = classeTargetId;
+		this.classeSourceId = classeSourceId;
+		this.propriedadeSourceId = propriedadeSourceId;
+		this.clauseWhere = clauseWhere;
+		this.clauseFilter = clauseFilter;
+	}
+
 	public String getMapAssertive() {
 		return mapAssertive;
 	}
-
+	
 	public void setMapAssertive(String mapAssertive) {
 		this.mapAssertive = mapAssertive;
 	}
@@ -151,4 +172,20 @@ public class Mapeamento {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public String getClauseWhere() {
+		return clauseWhere;
+	}
+
+	public void setClauseWhere(String clauseWhere) {
+		this.clauseWhere = clauseWhere;
+	}
+
+	public String getClauseFilter() {
+		return clauseFilter;
+	}
+
+	public void setClauseFilter(String clauseFilter) {
+		this.clauseFilter = clauseFilter;
+	}	
 }
