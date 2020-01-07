@@ -67,7 +67,7 @@ public class SPARQLTemplates {
 		String[] pT = target.split(":");
 
 		String s = "PREFIX " + pS1[0] + ": <" + prefix.getPrefixes(pS1[0]) + "> \n";
-		if (pS1[0] != pS2[0])
+		if (!pS1[0].equals(pS2[0]))
 			s += "PREFIX " + pS2[0] + ": <" + prefix.getPrefixes(pS2[0]) + "> \n";
 
 		s += "PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n" + 
@@ -77,7 +77,7 @@ public class SPARQLTemplates {
 	}
 	
 	// Padrão MD3 - Mapeamento de Propriedades
-	public String createEmbedPropertyMapping(String source, String target, String classeSource) {
+	public String createEmbedPropertyMapping(String source, String target, String classeSource, String propWhere) {
 		String[] pS = source.split(":");
 		String[] pT = target.split(":");
 		String[] pCS = classeSource.split(":");
@@ -88,9 +88,11 @@ public class SPARQLTemplates {
 		if (!pS[0].equals(pCS[0]))
 			s = s.concat("PREFIX " + pCS[0] + ": <" + prefix.getPrefixes(pCS[0]) + "> \n");
 
+		if(propWhere != null)
+			s += "PREFIX " + propWhere + ": <" + prefix.getPrefixes(propWhere) + "> \n";
+		
 		s += "CONSTRUCT { ?generatedURI " + target + " ?p . } \n" + 
-				"WHERE { ?SUBJ a " + classeSource + "; \n" +
-					source + " ?p queryExp \n"
+				"WHERE { ?SUBJ queryExp \n"
 					+ "BIND( IRI(CONCAT(STR(?SUBJ), ENCODE_FOR_URI(?p))) AS ?generatedURI) }";
 
 		return s;
@@ -143,8 +145,23 @@ public class SPARQLTemplates {
 					s = "; " + valuePropS + " ?o .";
 				break;
 			case 2: //Mapeamento de Propriedades de Tipos de Dados (MD1 e MD3)
-				domainWhereClause = domainWhereClause.replace(".", "; ");
-				s = domainWhereClause + source + " ?p ." + domainFilterClause;
+				if(domainFilterClause == null) {
+					if(domainWhereClause.contains(source)) {
+						domainWhereClause = domainWhereClause.replace("?o", "?p");
+						s = domainWhereClause;
+					}else {
+						domainWhereClause = domainWhereClause.replace(".", "; ");
+						s = domainWhereClause + source + " ?p .";
+					}
+				}else {
+					if(domainWhereClause.contains(source)){
+						domainWhereClause = domainWhereClause.replace("?o", "?p");
+						s = domainWhereClause + domainFilterClause;
+					}else {
+						domainWhereClause = domainWhereClause.replace(".", "; ");
+						s = domainWhereClause + source + " ?p ." + domainFilterClause;
+					}
+				}
 				break;
 			case 3: //Mapeamento de Propriedades de Tipos de Dados (MD2)
 				s = "";
