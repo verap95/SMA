@@ -10,6 +10,7 @@
     	$scope.valueFilterS = null;
     	$scope.valueFunction = null;
     	$scope.pSOld = null;
+    	$scope.checkboxProp2 = false;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
     		var responseData = response.data;
     		 var options = {
@@ -145,7 +146,8 @@
     		funcValue: $scope.valueFunction, 
     		p1S: $scope.pSOld, 
     		funcV1: $scope.prop1, 
-    		funcV2: $scope.prop2
+    		funcV2: $scope.prop2, 
+    		fPO2: $scope.checkboxProp2
     	}
     	var config = { 
     		headers:{'Content-Type':'application/json'}
@@ -303,12 +305,18 @@
    }
    
    $scope.applyValueFunction = function(){
-	   if($scope.typeOfFunction == 'String')
-		   if($scope.valueFunc != null)
-			   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + "," + $scope.prop2 + ")";
-			else 
-			   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.prop2 + ")";
-	   else
+	   if($scope.typeOfFunction == 'String'){
+		   if($scope.checkboxProp2){
+			   if($scope.valueFunc != null){
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + ", COALESCE(" + $scope.prop2 + ", ''))";
+			   }else 
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + ", COALESCE(" + $scope.prop2 + ", ''))";
+		   }else
+			   if($scope.valueFunc != null){
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + "," + $scope.prop2 + ")";
+			   }else 
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.prop2 + ")";
+	   }else
 		   if($scope.valueFunc != null)
 			   $scope.valueFunction = $scope.valueOfFunction + "(" +  $scope.valueFunc + ")";
 		   else 

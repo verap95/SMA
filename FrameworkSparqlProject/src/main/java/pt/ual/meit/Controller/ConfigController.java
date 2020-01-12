@@ -261,13 +261,13 @@ public class ConfigController {
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
 				System.out.println("IF correto - Padrão MC2");
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
 			}else if(mapC.getPropriedadeSourceId() != null) { //Padrões MD3 e MO2
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
 			}else{ //Padrões MD1 e MO1
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
 			}
 		} else {
 			if (!temp.getTypeS().equals("C")) { // Padrão MC2
@@ -275,12 +275,12 @@ public class ConfigController {
 				classeTarget = classService.findById(temp.getIdT());
 				String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
 			} else { // Padrão MC1
 				classeSource = classService.findById(temp.getIdS());
 				classeTarget = classService.findById(temp.getIdT());
 				mapRules = moduleCRM.saveMappingRule(temp, null, false, false);
-				mapResult = moduleCMS.saveMapSPARQL(temp, null, false, false);
+				mapResult = moduleCMS.saveMapSPARQL(temp, null, false, false, temp.getfPO2());
 			}
 			clauseWhere = mapResult.get(2);
 			if(mapResult.size() == 4)

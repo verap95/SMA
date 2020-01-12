@@ -15,6 +15,7 @@ public class TempAssertive {
 	private String funcV1;
 	private String funcV2;
 	private Integer p1S;
+	private Boolean fPO2;
 
 	public TempAssertive() {
 		super();
@@ -134,5 +135,13 @@ public class TempAssertive {
 
 	public void setFuncV2(String funcV2) {
 		this.funcV2 = funcV2;
+	}
+
+	public Boolean getfPO2() {
+		return fPO2;
+	}
+
+	public void setfPO2(Boolean fPO2) {
+		this.fPO2 = fPO2;
 	}
 }
