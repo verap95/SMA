@@ -3,6 +3,7 @@ package pt.ual.meit.Model;
 public class AssertivePublicObject {
 	private Integer id;
 	private String text;
+	private String type;
 	private String mapSPARQL;
 	private String mapRules;
 	
@@ -36,5 +37,13 @@ public class AssertivePublicObject {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}	
 }

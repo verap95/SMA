@@ -259,12 +259,12 @@ public class ConfigController {
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
-				System.out.println("IF correto - Padrão MC2");
+				System.out.println("IF correto - Padrão MD2");
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
-			}else if(mapC.getPropriedadeSourceId() != null) { //Padrões MD3 e MO2
+			}else if(mapC.getPropriedadeSourceId() != null || (temp.getTypeT().equals("O") && temp.getAssertive().contains("NULL"))) { //Padrões MD3 e MO2
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());				
 			}else{ //Padrões MD1 e MO1
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
@@ -306,7 +306,7 @@ public class ConfigController {
 	public @ResponseBody TempAssertive newAssertive(@RequestParam("nt") Integer idA, @RequestParam("tt") String typeT,
 			@RequestParam("ns") Integer idS, @RequestParam("ts") String typeS, @RequestParam("input") String input,
 			@RequestParam(value = "p1S", required = false) Integer p1S) {
-		String a;
+		String a="";
 		Propriedades pS, pT, pSOld;
 		Classe cS, cT;
 		Integer prop1S = null;
@@ -320,7 +320,7 @@ public class ConfigController {
 				pS = propService.findById(idS);
 				pT = propService.findById(idA);
 
-				if (!p1S.equals(null)) {
+				if (p1S != null) {
 					pSOld = propService.findById(p1S);
 					a = MappingAssertive.createN1PropertyMapping(
 							Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
@@ -341,35 +341,41 @@ public class ConfigController {
 				
 				Mapeamento map = mapService.findMapClasse(pT.getClasse(),pS.getClasse(), pS);
 				if(map != null) {
-					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MD2, MO1 e MO2
-						Mapeamento mapC = mapService.findByMapClasseProp(pT.getClasse(), pS);
-						if(mapC != null) {
-							a = MappingAssertive.createEmbedObjectPropertyMapping(
-									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
-									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
-									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MO1 e MO2
+						if(typeT.equals("O")) {
+							Mapeamento mapping = mapService.findByMapClasseProp(pT.getRangeClasse(), pS);
+							if(mapping != null) { // Padrão MO2
+								a = MappingAssertive.createEmbedObjectPropertyMapping(
+										Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
+										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
+										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+							}else { //Padrão MO1
+								a = MappingAssertive.createAssertiveMappingProperties(
+										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
+										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+										Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+							}
 						}else {
-							a = MappingAssertive.createAssertiveMappingProperties(
-								Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
-								Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
-								Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-								Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
-							prop1S = idS;
+							Mapeamento mapC = mapService.findByMapClasseProp(pT.getClasse(), pS);
+							if(mapC == null) {
+								a = MappingAssertive.createAssertiveMappingProperties(
+									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
+									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+								prop1S = idS;
+							}
 						}
-					}else { //Padrões MD3 e MO2
-						if(pT.getType().equals("D") && pS.getType().equals("D"))
+					}else { //Padrões MD3
+						if(pT.getType().equals("D") && pS.getType().equals("D")) {
 							a = MappingAssertive.createEmbedPropertyMapping(
 									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
 									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
 									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
-						else
-							a = MappingAssertive.createEmbedObjectPropertyMapping(
-									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
-									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
-									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+						}
 					}
 				}else
 					a = MappingAssertive.createAssertiveMappingProperties(
@@ -444,14 +450,24 @@ public class ConfigController {
 		output.setAssertive(assertiveFilter);
 		return output;
 	}
+	
+	@RequestMapping(value = "/newFunction", method = RequestMethod.GET, headers = "Accept=application/json")
+	public @ResponseBody TempAssertive addFunction(@RequestBody TempAssertive temp) {
+		String assertiveFunction = MappingAssertive.addFunctionToAssertive(temp.getAssertive(), temp.getFuncValue());
+		TempAssertive output = new TempAssertive();
+		output.setAssertive(assertiveFunction);
+		return output;
+	}
 
 	@RequestMapping(value = "/getTypeFunction", method = RequestMethod.GET, headers = "Accept=application/json")
 	public @ResponseBody List<String> getFunctions(@RequestParam("tf") String typeFunction) {
 		List<String> listFunction = new ArrayList();
 		
-		if(typeFunction.equals("String")) 
-			listFunction = Constants.getListFunctionString();
-		else if(typeFunction.equals("Data")) 
+		if(typeFunction.equals("String")) {
+			for(String key: Constants.getListFunctionString().keySet()) {
+				listFunction.add(key);
+			}
+		}else if(typeFunction.equals("Data")) 
 			listFunction = Constants.getListFunctionData();
 		else
 			listFunction.add("NOT IMPLEMENTED YET");

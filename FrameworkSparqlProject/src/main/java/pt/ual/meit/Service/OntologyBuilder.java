@@ -130,13 +130,11 @@ public class OntologyBuilder {
 								propService.createBasicProperty(propC);
 							}
 						}else {
-							Classe classFlgD = new Classe(classObj.getName(), classObj.getPrefix(), ontology, false);
-							propA = propService.findByClassID(classObj);
-							prop = new Propriedades(objectProp.getLocalName(),  m.getNsURIPrefix(objectProp.getNameSpace()), "O", classe, classFlgD, true);
+							prop = new Propriedades(objectProp.getLocalName(),  m.getNsURIPrefix(objectProp.getNameSpace()), "O", classe, classObj, true);
 						}
 							
 					}else
-							prop = new Propriedades(objectProp.getLocalName(), m.getNsURIPrefix(objectProp.getNameSpace()), "O", classe, null, true);
+						prop = new Propriedades(objectProp.getLocalName(), m.getNsURIPrefix(objectProp.getNameSpace()), "O", classe, null, true);
 					
 					propService.createBasicProperty(prop);
 //					for(Propriedades p : propA) {

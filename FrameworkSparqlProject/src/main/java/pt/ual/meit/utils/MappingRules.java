@@ -9,21 +9,46 @@ public class MappingRules {
 		return s;
 	}
 	
-	//MC1 - Mapeamento de Classes
-	public String createClassMappingRule(String target, String source) {
-		String s = target + "(s) ← " + source + "(s)";
+	//Mapeamento de Classes (Padrão MC1)
+	public String createMC1MappingRule(String target, String source, String propSource, String filter) {
+		String s = "";
+		if(filter != null) {
+			s = target + "(s) ← " + source + "(s) ; " + filter.replace(propSource, propSource + "(s,v)");
+		}else {
+			s = target + "(s) ← " + source + "(s)";
+		}
 		return s;
 	}
 	
-	//MC2 - Mapeamento de Classes
-	public String createClassToPropertyMappingRule(String target, String source, String cSource) {
-		String s = target + "(u) ← " + cSource +"(s); " + source + "(s,v) ; concat(s, xpath:encode-for-uri(v), u)";
+	//Mapeamento de Classes (Padrão MC2)
+	public String createMC2MappingRule(String target, String source, String cSource, String propSource, String filter) {
+		String s = "";
+		if(filter != null) {
+			s = target + "(u) ← " + cSource +"(s); generateUri[ψ](s,u) ; " + filter.replace(propSource, propSource + "(s,v)");
+		}else {
+			s = target + "(u) ← " + cSource +"(s); generateUri[ψ](s,u)";
+		}
 		return s;
 	}
 	
-	//MD1/MO1 - Mapeamento de Propriedades
-	public String createPropertyMapping(String cSource, String pSource, String pTarget) {
-		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; " + pSource + "(s,v)";
+	//Mapeamento de Propriedades de Tipos de Dados (Padrão MD1 e MO1)
+	public String createMD1_MO1MappingRule(String cSource, String pSource, String pTarget, 
+			String path, String propSource, String filter, String function) {
+		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; ";
+		if(path != null ) {
+			s = s.concat(path + "/");
+		}
+		if(function != null) {
+			s = s.concat(pSource + "(s,x)");
+		}else {
+			s = s.concat(pSource + "(s,v)");
+		}
+		if(filter != null) {
+			s = s.concat(" ; " + filter.replace(propSource, propSource + "(s,u) ; "));
+		}
+		if(function != null) {
+			s = s.concat( "; " + function + "(x,v)");
+		}
 		return s;
 	}
 	
@@ -33,17 +58,41 @@ public class MappingRules {
 		return s;
 	}
 	
-	//MD3/MO2 - Mapeamento de Propriedades
-	public String createEmbedPropertyMapping(String cSource, String pSource, String pTarget) {
-		String s = pTarget + "(u,z) ← " + cSource +"(s); " + pSource + "(s,z) ; concat(s, xpath:encode-for-uri(z), u)";
+	// Mapeamento de Propriedades de Tipos de Dados (Padrão MD3)
+	public String createMD3mappingRule(String cSource, String pSource, String filter, String pTarget) {
+		String s = "";
+		if(filter != null) {
+			s = pTarget + "(u,v) ← " + cSource +"(s); " + filter + "; " + pSource + "(s,v) ; generateUri[ψ](s,u)";
+		}else {
+			s = pTarget + "(u,v) ← " + cSource +"(s);" + pSource + "(s,v) ; generateUri[ψ](s,u)";
+		}
 		return s;
 	}
 	
+	// Mapeamento de Propriedades de Tipos de Dados (Padrão MO2)
+	public String createMO2mappingRule(String cSource, String filter, String pTarget) {
+		String s = "";
+		if(filter != null) {
+			s = pTarget + "(s,u) ← " + cSource +"(s); " + filter + " ; generateUri[ψ](s,u)";
+		}else {
+			s = pTarget + "(s,u) ← " + cSource +"(s); generateUri[ψ](s,u)";
+		}
+		return s;
+	}
+		
 	//Adicionar filtros às regras de mapeamento
 	public String addFilterToMapping(String prop, String filter) {
 		String s = "";
 		if(filter != null)
 			s = " ; " + filter.replace(prop, prop + "(s,v)");
+		return s;
+	}
+	
+	public String addFunctionToMapping(String function) {
+		String s="";
+		if(function != null) {
+			s = "; " + function + "(x,v)";
+		}
 		return s;
 	}
 }

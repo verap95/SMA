@@ -3,6 +3,7 @@
   angular.module('SparqlFramework', [])
     .controller('ConfigController', function ($scope, $http) {
     	$scope.flgFilter = false;
+    	$scope.flgFunction = false;
     	$scope.flgLoad = false;
     	$scope.inputMA = null;
     	$scope.nodeSource = null;
@@ -11,6 +12,7 @@
     	$scope.valueFunction = null;
     	$scope.pSOld = null;
     	$scope.checkboxProp2 = false;
+    	$scope.valueFunc = null;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
     		var responseData = response.data;
     		 var options = {
@@ -72,7 +74,7 @@
     		    	expandIcon: "fa fa-caret-right",
     		    	collapseIcon: "fa fa-caret-down",
     		    	levels: 0
-        		 };new
+        		 };
     		$('#treeSource').treeview(options);
         		 
         	$('#treeSource').on('nodeSelected', function(event, data){
@@ -99,6 +101,11 @@
     	}else
     		inputData = $scope.inputMA
     	
+    	if($scope.typeS == 'D')
+			$scope.flgFunction = true
+		else
+			$scope.flgFunction = false
+			
     	console.log($scope.inputMA);
     	var config = {
 		 		params:{
@@ -131,7 +138,7 @@
     }
     
     $scope.saveMap = function(){
-    	console.log("Save mapping ** $scope.pSOld: " , $scope.pSOld);
+    	console.log("Save mapping ** $scope.pSOld: " , $scope.pSOld , $scope.idS);
     	var requestData = {
     		idT : $scope.idA,
     		nameT: $scope.nameA,
@@ -306,21 +313,30 @@
    
    $scope.applyValueFunction = function(){
 	   if($scope.typeOfFunction == 'String'){
-		   if($scope.checkboxProp2){
+		   if($scope.prop2 != null){
+			   if($scope.checkboxProp2){
+				   if($scope.valueFunc != null){
+					   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + ", COALESCE(" + $scope.prop2 + ", ''))";
+				   }else 
+					   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + ", COALESCE(" + $scope.prop2 + ", ''))";
+			   }else
+				   if($scope.valueFunc != null){
+					   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + "," + $scope.prop2 + ")";
+				   }else 
+					   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.prop2 + ")";
+		   }else{
 			   if($scope.valueFunc != null){
-				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + ", COALESCE(" + $scope.prop2 + ", ''))";
-			   }else 
-				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + ", COALESCE(" + $scope.prop2 + ", ''))";
-		   }else
-			   if($scope.valueFunc != null){
-				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + "," + $scope.prop2 + ")";
-			   }else 
-				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.prop2 + ")";
-	   }else
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + ")";
+			   }else{
+				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + ")";
+			   }
+		   }
+	   }else{
 		   if($scope.valueFunc != null)
 			   $scope.valueFunction = $scope.valueOfFunction + "(" +  $scope.valueFunc + ")";
 		   else 
 			   $scope.valueFunction = $scope.valueOfFunction + "()";
+	   }
    }
 
    $scope.newFilter = function(){
@@ -333,7 +349,19 @@
    $scope.newFunction = function(){
 		$scope.valueOfFunction = null;
 		$scope.propriedades = null;
+		var data = {
+			idTemp: $scope.idTemp, 
+			assertive: $scope.inputMA,
+			funcValue: $scope.valueFunction
+		}
+		$http.get("http://localhost:8080/configuration/addFunction", data).then(function(response){
+	 		var dataR = response.data;
+				$scope.inputMA = dataR.assertive;		
+	 	});
+		
 		$('#functionModal').modal('hide');
+		
+		
   }
    
   $scope.getTypeFunction = function(){

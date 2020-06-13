@@ -36,29 +36,42 @@ public class ModuleCRM {
 	public String saveMappingRule(TempAssertive input, String classeSource, Boolean flgProp, Boolean flgMPC) {
 		String mapRule = null;
 		if (input.getTypeT().equals("C") && input.getTypeS().equals("C")) {
-			mapRule = mp.createClassMappingRule(input.getNameT(), input.getNameS());
+			mapRule = mp.createMC1MappingRule(input.getNameT(), input.getNameS(), input.getValuePropS(), input.getFilter());
 		} else if (input.getTypeT().equals("C") && !input.getTypeS().equals("C")) {
-			mapRule = mp.createClassToPropertyMappingRule(input.getNameT(), input.getNameS(), classeSource);
+			mapRule = mp.createMC2MappingRule(input.getNameT(), input.getNameS(), classeSource, input.getValuePropS(), input.getFilter());
 		} else if (input.getTypeT().equals("D") && input.getTypeS().equals("D")) {
+			//Obter a função de transformação para colocar na regra de Mapeamento
+			String functionValue = null;
+			if(input.getFuncValue() != null) {
+				for(String key : Constants.getListFunctionString().keySet()) {
+					if(input.getFuncValue().contains(key)) {
+						functionValue = Constants.getListFunctionString().get(key);
+					}
+				}
+			}
 			if(flgProp) { //Padrão MD2
 				Propriedades pS = propService.findById(input.getP1S());
 				mapRule = mp.createN1PropertyMapping(classeSource, 
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getNameS(), 
 							input.getFuncValue(),input.getNameT());
 			}else if(flgMPC)//Padrão MD3
-				mapRule = mp.createEmbedPropertyMapping(classeSource, input.getNameS(), input.getNameT());
-			else
-				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());				
+				mapRule = mp.createMD3mappingRule(classeSource, input.getNameS(), input.getFilter(), input.getNameT());
+			else //Padrão MD1
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), null, input.getValuePropS(), input.getFilter(), functionValue);			
 		} else if (input.getTypeT().equals("O") && input.getTypeS().equals("O")) {
 			if(flgMPC) //Padrão MO2
-				mapRule = mp.createEmbedPropertyMapping(classeSource, input.getNameS(), input.getNameT());
-			else
-				mapRule = mp.createPropertyMapping(classeSource, input.getNameS(), input.getNameT());
+				mapRule = mp.createMO2mappingRule(classeSource, input.getFilter(), input.getNameT());
+			else //Padrão MO1
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), null, input.getValuePropS(), input.getFilter(), null);
 		}
 
-		if (input.getFilter() != null)
-			mapRule = mapRule.concat(mp.addFilterToMapping(input.getValuePropS(), input.getFilter()));
+		//Obter o filtro f para colocar na regra de mapeamento
+//		if (input.getFilter() != null)
+//			mapRule = mapRule.concat(mp.addFilterToMapping(input.getValuePropS(), input.getFilter()));
 
+		
+			
+		
 		return mapRule;
 	}
 

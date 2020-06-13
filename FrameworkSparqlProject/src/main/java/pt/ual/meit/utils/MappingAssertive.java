@@ -16,15 +16,6 @@ public class MappingAssertive {
 		String s = target + " ≡ null";
 		return s;
 	}
-	
-	public static String addFilterToAssertive(String assertive, String filter, String typeS, String typeT) {
-		String s = null;
-		if(typeS.equals("C")) {
-			s = assertive + " / " + filter;
-		}
-		
-		return s;
-	}
 
 	//MC1 - Mapeamento de Classes
 	public static String createAssertiveMappingClass(String source, String target) {
@@ -33,8 +24,9 @@ public class MappingAssertive {
 	}
 
 	//MC2 - Mapeamento de Classes
-	public static String createAssertiveMapClassProperty(String cS, String pS, String cT) {
-		String s = cT + " ≡ " + cS + " [ " + pS + " ]";
+	public static String createAssertiveMapClassProperty(String cS, String props, String cT) {
+		//Falta adicionar as várias propriedades, apenas funciona para uma
+		String s = cT + " ≡ " + cS + " [ " + props + " ]";
 		return s;
 	}
 	
@@ -59,6 +51,39 @@ public class MappingAssertive {
 	//MO2 - Mapeamento de Propriedades
 	public static String createEmbedObjectPropertyMapping(String cT, String pT, String cS, String pS) {
 		String s = cT + " / " + pT + " ≡ " + cS + " [" + pS + "] / NULL";
+		return s;
+	}
+	
+	/**
+	 * Adicionar filtro à assertiva
+	 * @param assertive
+	 * @param filter
+	 * @param typeS
+	 * @param typeT
+	 * @return
+	 */
+	public static String addFilterToAssertive(String assertive, String filter, String typeS, String typeT) {
+		String s = assertive + " / " + filter;
+		return s;
+	}
+	
+	/**
+	 * Adicionar função à assertiva
+	 * @param assertive
+	 * @param filter
+	 * @param typeS
+	 * @param typeT
+	 * @return
+	 */
+	public static String addFunctionToAssertive(String assertive, String function) {
+		String s = null;
+		for(String key: Constants.getListFunctionString().keySet()) {
+			if(function.contains(key)) {
+				function = function.replace(key, Constants.getListFunctionString().get(key));
+			}
+		}		
+		s = assertive + " / " + function;
+		
 		return s;
 	}
 }

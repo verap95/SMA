@@ -23,7 +23,10 @@ public class ClasseService {
 	
 	public Classe findById(Integer id) {
 		Optional<Classe> classe = classeRepository.findById(id);		
-		return classe.get(); 
+		if(classe.isPresent())
+			return classe.get(); 
+		else
+			return null;
 	}
 
 	public List<Classe> findByIDConfig(ConfigOntology config) {

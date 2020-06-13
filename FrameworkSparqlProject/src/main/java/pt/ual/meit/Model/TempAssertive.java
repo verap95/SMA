@@ -1,5 +1,7 @@
 package pt.ual.meit.Model;
 
+import java.util.List;
+
 public class TempAssertive {
 	private Integer idT;
 	private String nameT;
@@ -16,7 +18,9 @@ public class TempAssertive {
 	private String funcV2;
 	private Integer p1S;
 	private Boolean fPO2;
-
+	private List<String> listProps;
+	private Integer idTemp;
+	
 	public TempAssertive() {
 		super();
 	}
@@ -143,5 +147,13 @@ public class TempAssertive {
 
 	public void setfPO2(Boolean fPO2) {
 		this.fPO2 = fPO2;
+	}
+
+	public List<String> getListProps() {
+		return listProps;
+	}
+
+	public void setListProps(List<String> listProps) {
+		this.listProps = listProps;
 	}
 }
