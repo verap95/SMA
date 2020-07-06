@@ -36,7 +36,7 @@ public class MappingService {
 		return mapeamentoEntity = mappingRepository.save(mapeamentoEntity);
 	}
 	
-	public Mapeamento createMapping(Classe classeTarget, Classe classeSource, Propriedades propTarget, Propriedades propSource, String mapAssertive, String mapSPARQL, String mapRules, String mapComment, String clauseWhere, String clauseFilter) {
+	public Mapeamento createMapping(Classe classeTarget, Classe classeSource, Propriedades propTarget, Propriedades propSource, String mapAssertive, String mapSPARQL, String mapRules, String mapComment, String clauseWhere, String clauseFilter, String listProps) {
 		Mapeamento mapeamentoEntity;
 		List<Mapeamento> mList = null;
 		if (classeTarget == null) {
@@ -54,7 +54,7 @@ public class MappingService {
 					deleteBasicMapping(mList.get(0));
 			}
 			mapeamentoEntity = new Mapeamento(classeTarget, classeSource, propSource, mapAssertive, 
-					mapSPARQL, mapRules, false, mapComment, clauseWhere, clauseFilter);
+					mapSPARQL, mapRules, false, mapComment, clauseWhere, clauseFilter, listProps);
 		}
 		return mapeamentoEntity = mappingRepository.save(mapeamentoEntity);
 	}

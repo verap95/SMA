@@ -25,9 +25,14 @@ public class MappingAssertive {
 
 	//MC2 - Mapeamento de Classes
 	public static String createAssertiveMapClassProperty(String cS, String props, String cT) {
-		//Falta adicionar as várias propriedades, apenas funciona para uma
 		String s = cT + " ≡ " + cS + " [ " + props + " ]";
 		return s;
+	}
+	
+	public static String updateAssertiveMappingClassProperty(String assertive, String prop) {
+		String props = assertive.substring(assertive.indexOf("[")+1, assertive.indexOf("]")-1);
+		String temp = props + " , " + prop;		
+		return assertive.replace(props, temp);
 	}
 	
 	//MD1/MO1 - Mapeamento de Propriedades

@@ -43,6 +43,8 @@ public class Mapeamento {
 	@JoinColumn(name = "propertyT_id", nullable = true)
 	private Propriedades propriedadeTargetId;
 	
+	private String listProps;
+	
 	private String clauseWhere;
 	
 	private String clauseFilter;
@@ -71,7 +73,7 @@ public class Mapeamento {
 	//Mapeamento de Classes
 	public Mapeamento(
 			Classe classeTargetId, Classe classeSourceId,  Propriedades propriedadeSourceId, String mapAssertive, String mapSPARQL, String mapRules, Boolean flgBasic,
-			String mapComments, String clauseWhere, String clauseFilter) {
+			String mapComments, String clauseWhere, String clauseFilter, String listProps) {
 		super();
 		this.mapAssertive = mapAssertive;
 		this.mapSPARQL = mapSPARQL;
@@ -81,6 +83,7 @@ public class Mapeamento {
 		this.classeTargetId = classeTargetId;
 		this.classeSourceId = classeSourceId;
 		this.propriedadeSourceId = propriedadeSourceId;
+		this.listProps = listProps;
 		this.clauseWhere = clauseWhere;
 		this.clauseFilter = clauseFilter;
 	}
@@ -187,5 +190,13 @@ public class Mapeamento {
 
 	public void setClauseFilter(String clauseFilter) {
 		this.clauseFilter = clauseFilter;
+	}
+
+	public String getListProps() {
+		return listProps;
+	}
+
+	public void setListProps(String listProps) {
+		this.listProps = listProps;
 	}	
 }

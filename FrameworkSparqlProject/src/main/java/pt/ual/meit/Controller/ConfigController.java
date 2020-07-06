@@ -242,7 +242,7 @@ public class ConfigController {
 	public ResponseEntity<?> saveAssertive(@RequestBody TempAssertive temp) {
 		String mapRules = null;
 		String clauseWhere = null;
-		String clauseFilter = null;
+		String clauseFilter = null, listProps = "";
 		Classe classeSource = null;
 		Classe classeTarget = null;
 		Propriedades propT = null;
@@ -272,8 +272,15 @@ public class ConfigController {
 		} else {
 			if (!temp.getTypeS().equals("C")) { // Padrão MC2
 				propS = propService.findById(temp.getIdS());
-				classeTarget = classService.findById(temp.getIdT());
 				String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
+				classeTarget = classService.findById(temp.getIdT());
+				classeSource = classService.findById(propS.getClasse().getId());
+				propS = null;
+				for(int i=0; i<temp.getListProps().size(); i++) {
+					listProps = listProps.concat(temp.getListProps().get(i));
+					if(temp.getListProps().size() != (i+1))
+						listProps = listProps.concat(",");
+				}
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
 			} else { // Padrão MC1
@@ -296,7 +303,7 @@ public class ConfigController {
 		
 
 		mapService.createMapping(classeTarget, classeSource, propT, propS, temp.getAssertive(), mapSPARQL, mapRules,
-				mapComment, clauseWhere, clauseFilter);
+				mapComment, clauseWhere, clauseFilter, listProps);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -305,7 +312,7 @@ public class ConfigController {
 			"application/json" })
 	public @ResponseBody TempAssertive newAssertive(@RequestParam("nt") Integer idA, @RequestParam("tt") String typeT,
 			@RequestParam("ns") Integer idS, @RequestParam("ts") String typeS, @RequestParam("input") String input,
-			@RequestParam(value = "p1S", required = false) Integer p1S) {
+			@RequestParam(value = "p1S", required = false) Integer p1S, @RequestParam(value = "listProps", required = false) List<String> listProps) {
 		String a="";
 		Propriedades pS, pT, pSOld;
 		Classe cS, cT;
@@ -329,7 +336,12 @@ public class ConfigController {
 							Constants.ATRIBUTOS(pSOld.getPrefix(), pSOld.getName()),
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 					prop1S = p1S;
-				} else {
+				} else if (typeT.equals("C")){
+					cT = classService.findById(idA);
+					pS = propService.findById(idS);
+					listProps.add(Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+					a = MappingAssertive.updateAssertiveMappingClassProperty(input, Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+				}else {
 					a = MappingAssertive.addPropertySourceToAssertive(input,
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 				}
@@ -390,6 +402,8 @@ public class ConfigController {
 						Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 						Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
 						Constants.ATRIBUTOS(cT.getPrefix(), cT.getName()));
+				listProps = new ArrayList<String>();
+				listProps.add(Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 			} else {
 				cT = classService.findById(idA);
 				cS = classService.findById(idS);
@@ -401,6 +415,7 @@ public class ConfigController {
 		TempAssertive temp = new TempAssertive();
 		temp.setAssertive(a);
 		temp.setP1S(prop1S);
+		temp.setListProps(listProps);
 		return temp;
 	}
 

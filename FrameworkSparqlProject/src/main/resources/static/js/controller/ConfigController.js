@@ -114,13 +114,15 @@
 		 			ns: $scope.idS,
 		 			ts: $scope.typeS,
 		 			input: inputData, 
-		 			p1S: $scope.pSOld
+		 			p1S: $scope.pSOld, 
+		 			listProps: $scope.listProps
 		 		}
 		 	}
     	
-	 	$http.get("http://localhost:8080/configuration/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}", config).then(function(response){
+	 	$http.get("http://localhost:8080/configuration/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}&{listProps}", config).then(function(response){
 	 		$scope.inputMA = response.data.assertive;	
 	 		$scope.pSOld = response.data.p1S;
+	 		$scope.listProps = response.data.listProps;
 	 		console.log("Data from new Assertive: " , response.data);
 	 	});
 		
@@ -134,7 +136,7 @@
 	 		$('#loadSourceModal').modal('hide');
 		});
     		
-    		$scope.flgFilter = true;
+    	$scope.flgFilter = true;
     }
     
     $scope.saveMap = function(){
@@ -154,7 +156,9 @@
     		p1S: $scope.pSOld, 
     		funcV1: $scope.prop1, 
     		funcV2: $scope.prop2, 
-    		fPO2: $scope.checkboxProp2
+    		fPO2: $scope.checkboxProp2, 
+    		listProps: $scope.listProps
+    		
     	}
     	var config = { 
     		headers:{'Content-Type':'application/json'}

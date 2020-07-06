@@ -1,5 +1,7 @@
 package pt.ual.meit.utils;
 
+import java.util.List;
+
 import pt.ual.meit.Model.TempAssertive;
 
 public class SPARQLTemplates {
@@ -29,10 +31,15 @@ public class SPARQLTemplates {
 			}
 			break;
 		case 2: // Template T2 - Mapeamento de Classes (Padrão MC2)
-			//Falta adicionar as várias propriedades, neste momento apenas funciona para uma
 			String[] propS2 = propComp.split(":");
 			if (!pS[0].equals(propS2[0])) {
 				prefixExp = prefixExp.concat("PREFIX " + propS2[0] + ": <" + prefix.getPrefixes(propS2[0]) + "> \n");
+			}
+			for(String prop : am.getListProps()) { // Para funcionar para várias propriedades
+				String[] p = prop.split(":");
+				if (!pS[0].equals(p[0])) {
+					prefixExp = prefixExp.concat("PREFIX " + p[0] + ": <" + prefix.getPrefixes(p[0]) + "> \n");
+				}
 			}
 			break;
 		case 3: // Template T3 - Mapeamento de Propriedade de Tipo de Dados / Objeto (Padrão MD1 / MO1)
@@ -77,23 +84,36 @@ public class SPARQLTemplates {
 		return f;
 	}
 	
-	public String[] getUriExp(String props) {
-		String[] listP = props.split(",");
-		String p = null;
-		String temp = null;
-		if(listP.length >1) {
-			for(int i=0; i< listP.length; i++) {
+	public String[] getUriExp(List<String> props) {
+		String prop, temp = "";
+		if(props.size() == 1) {
+			prop = "?A1";
+		}else{
+			for(int i=0; i< props.size(); i++) {
 				if(!temp.isEmpty()) {
 					temp = temp.concat(",");
 				}
-				temp = temp.concat("?A" + i);
+				temp = temp.concat("?A" + (i+1));
 			}
-			p = "CONCAT("+temp+")";
-		}else {
-			p = "?A1";
+			prop = "CONCAT("+temp+")";
+			
 		}
+//		String[] listP = props.split(",");
+//		String p = null;
+//		String temp = null;
+//		if(listP.length >1) {
+//			for(int i=0; i< listP.length; i++) {
+//				if(!temp.isEmpty()) {
+//					temp = temp.concat(",");
+//				}
+//				temp = temp.concat("?A" + i);
+//			}
+//			p = "CONCAT("+temp+")";
+//		}else {
+//			p = "?A1";
+//		}
 		
-		String [] result = {temp, "ENCODE_FOR_URI(" + p + ")"};
+		String [] result = {temp, "ENCODE_FOR_URI(" + prop + ")"};
 		return result;
 	}
 	
@@ -119,10 +139,10 @@ public class SPARQLTemplates {
 	// Padrão MD1/MO1 - Mapeamento de Propriedades
 	public String createPropertyMapping(String classeSource, String propTarget, String prefixExp, String queryExp, String functionExp) {
 		String t;
-		if(functionExp.isEmpty()) {
-			t = Constants.TemplateT3;
-		}else {
+		if(functionExp != null && !functionExp.isEmpty()) {
 			t = Constants.TemplateT6.replace("functionExp", functionExp);
+		}else {
+			t = Constants.TemplateT3;
 		}
 		t = t.replace("Cs", classeSource);
 		t = t.replace("Pt", propTarget);
@@ -220,7 +240,7 @@ public class SPARQLTemplates {
 	// Carregar a informação necessária da variável queryExp
 	public String setQueryExp(Integer pattern, String valuePropS,
 			String domainWhereClause, String domainFilterClause, String source, 
-			Boolean flgOP2, Boolean flgFunction, String rangeWhereClause, String rangeFilterClause) {
+			Boolean flgOP2, Boolean flgFunction, String rangeWhereClause, String rangeFilterClause, List<String> listProps) {
 		String s = "";
 		
 		switch(pattern) {
@@ -231,7 +251,11 @@ public class SPARQLTemplates {
 					s = "; " + valuePropS + " ?o .";
 				break;
 			case 2: //Template T2 - Mapeamento de Classes (MC2)
-				s = "; " + valuePropS + " ?A1 .";
+				for(int i=0; i < listProps.size(); i++) {
+					s = s + " ; " + listProps.get(i) + " ?A"+(i+1) ;
+					if(listProps.size() == (i+1))
+						s = s + ".";
+				}
 				break;	
 			case 4: //Template T4 - Mapeamento de Propriedades de Tipo de Dados (Padrão MD3)
 				domainWhereClause = domainWhereClause.replace("; ", "");
@@ -279,7 +303,7 @@ public class SPARQLTemplates {
 				break;
 			case 7: //Template T7 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)
 			case 8: //Template T8 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)
-				domainWhereClause = domainWhereClause.replace(".", "; ");
+				domainWhereClause = domainWhereClause.replace(".", "");
 				if(domainFilterClause == null) {
 					if(flgOP2)
 						s = domainWhereClause + valuePropS + " ?s . OPTIONAL { ?SUBJ " + source + " ?t } ";
