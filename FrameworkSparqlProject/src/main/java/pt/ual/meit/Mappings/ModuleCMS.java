@@ -50,8 +50,7 @@ public class ModuleCMS {
 		}else if(input.getTypeT().equals("C") && !input.getTypeS().equals("C")) { //Padrão MC2
 			mapComment = Constants.PADRAO_MC2;
 			prefixExp = ms.getPrefixes(2,input, null , classeSource, null); //Obtém os prefixos presentes na AM 
-			uriExpProp = ms.getUriExp(input.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
-			uriProps = uriExpProp[0];
+			uriExpProp = ms.getUriExp(input.getListProps(), null); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 			uriExp = uriExpProp[1];
 			queryExp = ms.setQueryExp(2, input.getNameS(), null, null, null, flgOP2, false, null, null, input.getListProps());
 			clauseWhere = queryExp;
@@ -104,11 +103,10 @@ public class ModuleCMS {
 				prefixExp = ms.getPrefixes(4,input, classeSource, prop, null); //Obtém os prefixos presentes na AM 
 				List<String> listProps = new ArrayList<String>();
 				listProps.add(input.getNameS());
-				uriExpProp = ms.getUriExp(listProps); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
-				uriProps = uriExpProp[0];
+				uriExpProp = ms.getUriExp(listProps, mapping.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 				uriExp = uriExpProp[1];
 				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null);
-				mapSPARQL = ms.createEmbedPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp);	
+				mapSPARQL = ms.createEmbedPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp, uriExpProp[0]);	
 			}
 			else{ //Padrão MD1
 				mapComment = Constants.PADRAO_MD1;
@@ -154,7 +152,7 @@ public class ModuleCMS {
 				prefixExp = ms.getPrefixes(5,input, classeSource, propD, propRangeClass); //Obtém os prefixos presentes na AM 
 				List<String> listProps = new ArrayList<String>();
 				listProps.add(input.getNameS());
-				uriExpProp = ms.getUriExp(listProps); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
+				uriExpProp = ms.getUriExp(listProps, mapping.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 				uriProps = uriExpProp[0];
 				uriExp = uriExpProp[1];
 				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, mappingRange.getClauseWhere(), mappingRange.getClauseFilter(), null);

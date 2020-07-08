@@ -84,10 +84,27 @@ public class SPARQLTemplates {
 		return f;
 	}
 	
-	public String[] getUriExp(List<String> props) {
-		String prop, temp = "";
+	public String[] getUriExp(List<String> props, String listPropsSources) {
+		String prop = "", temp = "", t="";
 		if(props.size() == 1) {
-			prop = "?A1";
+			if(listPropsSources != null && !listPropsSources.isEmpty()) {
+				String[] sources = listPropsSources.split(",");
+				for(int i=0; i< sources.length; i++) {
+					if(!t.isEmpty()) {
+						t = t.concat(",");
+					}
+					t = t.concat("?A" + (i+1));
+					
+					if(sources[i].equals(props.get(0))) {
+						temp = "?A" + (i+1);
+					}
+					prop = "CONCAT("+t+")";
+				}
+			}else {
+				prop = "?A1";
+				temp=prop;
+			}
+			
 		}else{
 			for(int i=0; i< props.size(); i++) {
 				if(!temp.isEmpty()) {
@@ -188,8 +205,9 @@ public class SPARQLTemplates {
 	}
 	
 	// Padrão MD3 - Mapeamento de Propriedades
-	public String createEmbedPropertyMapping(String Cs, String target, String prefixExp, String queryExp, String uriExp) {
+	public String createEmbedPropertyMapping(String Cs, String target, String prefixExp, String queryExp, String uriExp, String valuePt) {
 		String t4 = Constants.TemplateT4.replace("prefixExp", prefixExp);
+		t4 = t4.replace("?Ai", valuePt);
 		t4 = t4.replace("Pt", target);
 		t4 = t4.replace("Cs", Cs);
 		t4 = t4.replace("queryExp", queryExp);
@@ -258,7 +276,7 @@ public class SPARQLTemplates {
 				}
 				break;	
 			case 4: //Template T4 - Mapeamento de Propriedades de Tipo de Dados (Padrão MD3)
-				domainWhereClause = domainWhereClause.replace("; ", "");
+				domainWhereClause = domainWhereClause.replaceFirst("; ", "");
 				if(domainFilterClause != null) {
 					s = domainWhereClause + domainFilterClause;
 				}else {

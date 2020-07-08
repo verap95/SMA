@@ -48,8 +48,8 @@ public class MappingAssertive {
 	}
 	
 	//MD3 - Mapeamento de Propriedades
-	public static String createEmbedPropertyMapping(String cT, String pT, String cS, String pS) {
-		String s = cT + " / " + pT + " ≡ " + cS + " [" + pS + "] / " + pS;
+	public static String createEmbedPropertyMapping(String cT, String pT, String cS, String listP, String pS) {
+		String s = cT + " / " + pT + " ≡ " + cS + " [" + listP + "] / " + pS;
 		return s;
 	}
 	

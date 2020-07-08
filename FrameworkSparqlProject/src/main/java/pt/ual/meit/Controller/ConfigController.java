@@ -255,16 +255,20 @@ public class ConfigController {
 			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse(), propS);
 			if (mapC == null) 
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-			
+			else {
+				if(mapC.getListProps()!= null && !mapC.getListProps().contains(temp.getNameS())) {
+					return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+				}
+			}
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
 				System.out.println("IF correto - Padrão MD2");
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
-			}else if(mapC.getPropriedadeSourceId() != null || (temp.getTypeT().equals("O") && temp.getAssertive().contains("NULL"))) { //Padrões MD3 e MO2
+			}else if(temp.getListProps() != null && !temp.getListProps().isEmpty()) { //Padrão MD3 e MO2
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
-				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());				
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
 			}else{ //Padrões MD1 e MO1
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
@@ -276,6 +280,7 @@ public class ConfigController {
 				classeTarget = classService.findById(temp.getIdT());
 				classeSource = classService.findById(propS.getClasse().getId());
 				propS = null;
+				
 				for(int i=0; i<temp.getListProps().size(); i++) {
 					listProps = listProps.concat(temp.getListProps().get(i));
 					if(temp.getListProps().size() != (i+1))
@@ -370,8 +375,14 @@ public class ConfigController {
 										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
 							}
 						}else {
-							Mapeamento mapC = mapService.findByMapClasseProp(pT.getClasse(), pS);
-							if(mapC == null) {
+							if(typeS.equals("D") && map.getListProps() != null && map.getListProps().contains(pS.getName())) {
+									a = MappingAssertive.createEmbedPropertyMapping(
+											Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+											Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
+											Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
+											map.getListProps(),
+											Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+							}else {
 								a = MappingAssertive.createAssertiveMappingProperties(
 									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
@@ -380,21 +391,13 @@ public class ConfigController {
 								prop1S = idS;
 							}
 						}
-					}else { //Padrões MD3
-						if(pT.getType().equals("D") && pS.getType().equals("D")) {
-							a = MappingAssertive.createEmbedPropertyMapping(
-									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
-									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
-									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
-						}
 					}
 				}else
 					a = MappingAssertive.createAssertiveMappingProperties(
-							Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
-							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
-							Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-							Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+						Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
+						Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+						Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
+						Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
 			} else if (typeT.equals("C") && typeS.equals("D")) {
 				cT = classService.findById(idA);
 				pS = propService.findById(idS);

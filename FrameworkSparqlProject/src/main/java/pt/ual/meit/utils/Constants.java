@@ -53,7 +53,7 @@ public final class Constants {
 	*/
 	public static final String PADRAO_MD3 = "# Template T4 – Mapeamento de Propriedade";
 	public static final String TemplateT4 = "PREFIX prefixExp" +
-											"CONSTRUCT { ?generateURI Pt ?A1 . } \n"+
+											"CONSTRUCT { ?generateURI Pt ?Ai . } \n"+
 											"WHERE { ?SUBJ a Cs ; queryExp \n" + 
 											"BIND( IRI( CONCAT( STR(?SUBJ), uriExp) ) AS ?generateURI) }";
 	
