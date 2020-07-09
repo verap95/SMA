@@ -256,9 +256,10 @@ public class ConfigController {
 			if (mapC == null) 
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			else {
-				if(mapC.getListProps()!= null && !mapC.getListProps().contains(temp.getNameS())) {
-					return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-				}
+				if(mapC.getListProps() == null)
+					if(!mapC.getListProps().contains(temp.getNameS()))
+						return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+				
 			}
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
@@ -360,13 +361,13 @@ public class ConfigController {
 				if(map != null) {
 					if (map.getPropriedadeSourceId() == null){ //Padrões MD1, MO1 e MO2
 						if(typeT.equals("O")) {
-							Mapeamento mapping = mapService.findByMapClasseProp(pT.getRangeClasse(), pS);
+							Mapeamento mapping = mapService.findMapClasse(pT.getRangeClasse(), pS.getClasse(), pS);
 							if(mapping != null) { // Padrão MO2
 								a = MappingAssertive.createEmbedObjectPropertyMapping(
 										Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), 
 										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
-										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+										mapping.getListProps());
 							}else { //Padrão MO1
 								a = MappingAssertive.createAssertiveMappingProperties(
 										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),

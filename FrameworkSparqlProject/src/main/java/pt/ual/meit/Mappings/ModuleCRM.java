@@ -58,7 +58,7 @@ public class ModuleCRM {
 				mapRule = mp.createMD3mappingRule(classeSource, input.getNameS(), input.getFilter(), input.getNameT());
 			else //Padrão MD1
 				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), null, input.getValuePropS(), input.getFilter(), functionValue);			
-		} else if (input.getTypeT().equals("O") && input.getTypeS().equals("O")) {
+		} else if (input.getTypeT().equals("O") || input.getTypeS().equals("O")) {
 			if(flgMPC) //Padrão MO2
 				mapRule = mp.createMO2mappingRule(classeSource, input.getFilter(), input.getNameT());
 			else //Padrão MO1

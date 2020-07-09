@@ -284,7 +284,8 @@ public class SPARQLTemplates {
 				}
 				break;
 			case 5: //Template T5 - Mapeamento de Propriedades de Tipos de Dados (Padrão MO2)
-				domainWhereClause = domainWhereClause.replace("; ", "");
+				domainWhereClause = domainWhereClause.replaceFirst("; ", "");
+				domainWhereClause = domainWhereClause.replace(".", "");
 				s = domainWhereClause + rangeWhereClause;
 				
 				if(domainFilterClause != null) {
