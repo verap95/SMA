@@ -8,6 +8,8 @@ public class NodesPublicObject {
 	private String text;
 	private String type;
 	private String aBasic;
+	private boolean flgPathExp;
+	private Integer psPath;
 	private List<AssertivePublicObject> listA = new ArrayList<>();
 	private List<NodesPublicObject> nodes;
 
@@ -57,6 +59,34 @@ public class NodesPublicObject {
 
 	public void setNodes(List<NodesPublicObject> nodes) {
 		this.nodes = nodes;
+	}
+
+	/**
+	 * @return the flgPathExp
+	 */
+	public boolean isFlgPathExp() {
+		return flgPathExp;
+	}
+
+	/**
+	 * @param flgPathExp the flgPathExp to set
+	 */
+	public void setFlgPathExp(boolean flgPathExp) {
+		this.flgPathExp = flgPathExp;
+	}
+
+	/**
+	 * @return the psPath
+	 */
+	public Integer getPsPath() {
+		return psPath;
+	}
+
+	/**
+	 * @param psPath the psPath to set
+	 */
+	public void setPsPath(Integer psPath) {
+		this.psPath = psPath;
 	}
 
 

@@ -258,7 +258,8 @@ public class SPARQLTemplates {
 	// Carregar a informação necessária da variável queryExp
 	public String setQueryExp(Integer pattern, String valuePropS,
 			String domainWhereClause, String domainFilterClause, String source, 
-			Boolean flgOP2, Boolean flgFunction, String rangeWhereClause, String rangeFilterClause, List<String> listProps) {
+			Boolean flgOP2, Boolean flgFunction, String rangeWhereClause, String rangeFilterClause, 
+			List<String> listProps, String psPath) {
 		String s = "";
 		
 		switch(pattern) {
@@ -303,20 +304,37 @@ public class SPARQLTemplates {
 						domainWhereClause = domainWhereClause.replace("?o", "?p");
 						s = domainWhereClause.replace(";", "");
 					}else {
-						if(flgFunction)
-							s = source + " ?s " + domainWhereClause;
-						else
-							s =  source + " ?p" + domainWhereClause;
+						if(psPath != null && domainWhereClause.equals(".")) {
+							s = psPath + " ?a . " + " ?a " + source;
+							if(flgFunction)
+								s = s + " ?s .";
+							else
+								s = s + " ?p .";
+						}else if (psPath != null && !domainWhereClause.equals(".")) {
+							domainWhereClause = domainWhereClause.replace(".","; ");
+							s = domainWhereClause + psPath + " ?a . ?a " + source;
+						}else {
+							if(flgFunction)
+								s = source + " ?s " + domainWhereClause;
+							else
+								s =  source + " ?p" + domainWhereClause;
+						}
 					}
 				}else {
 					if(domainWhereClause.contains(source)){
 						domainWhereClause = domainWhereClause.replace("?o", "?p");
 						s = domainWhereClause + domainFilterClause;
 					}else {
-						if(flgFunction)
-							s = source + " ?s " + domainWhereClause + domainFilterClause;
+						domainWhereClause = domainWhereClause.replace(";","");
+						domainWhereClause = domainWhereClause.replace(".","; ");
+						if(psPath != null)
+							s = domainWhereClause + psPath + " ?a . ?a " + source;
 						else
-							s =  source + " ?p" + domainWhereClause + domainFilterClause;
+							s = domainWhereClause + source;
+						if(flgFunction)
+							s = s + " ?s ."+ domainFilterClause;
+						else
+							s = s + " ?p ."+ domainFilterClause;
 					}
 				}
 				break;

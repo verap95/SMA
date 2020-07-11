@@ -39,7 +39,7 @@ public class ModuleCMS {
 		if(input.getTypeT().equals("C") && input.getTypeS().equals("C")) { // Padrão MC1
 			mapComment = Constants.PADRAO_MC1;
 			prefixExp = ms.getPrefixes(1,input, classeSource, null, null); //Obtém os prefixos presentes na AM 
-			queryExp = ms.setQueryExp(1, input.getValuePropS(), null, null, null, flgOP2, false, null, null, null);
+			queryExp = ms.setQueryExp(1, input.getValuePropS(), null, null, null, flgOP2, false, null, null, null, null);
 			clauseWhere = queryExp;
 			if(input.getFilterS() != null) { //Obtém o filtro f presente na AM
 				String[] filter = ms.getFilterExp(queryExp, input.getFilterS());
@@ -52,7 +52,7 @@ public class ModuleCMS {
 			prefixExp = ms.getPrefixes(2,input, null , classeSource, null); //Obtém os prefixos presentes na AM 
 			uriExpProp = ms.getUriExp(input.getListProps(), null); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 			uriExp = uriExpProp[1];
-			queryExp = ms.setQueryExp(2, input.getNameS(), null, null, null, flgOP2, false, null, null, input.getListProps());
+			queryExp = ms.setQueryExp(2, input.getNameS(), null, null, null, flgOP2, false, null, null, input.getListProps(), null);
 			clauseWhere = queryExp;
 			if(input.getFilterS() != null) { //Obtém o filtro f presente na AM
 				String[] filter = ms.getFilterExp(queryExp, input.getFilterS());
@@ -61,16 +61,22 @@ public class ModuleCMS {
 			}
 			mapSPARQL = ms.createClassToPropertyMapping(prefixExp, queryExp, uriExp, input.getNameT(), classeSource);
 		}else if(input.getTypeT().equals("D") && input.getTypeS().equals("D")) { //Padrões de Propriedades de Tipos de Dados
-			Propriedades propDS = propService.findById(input.getIdS());
+			Propriedades propDS;
+			if(input.isFlgExpPath())
+				propDS = propService.findById(input.getpSPath());
+			else
+				propDS = propService.findById(input.getIdS());
 			Propriedades propDT = propService.findById(input.getIdT());
 			mapping = mapService.findMapClasse(propDT.getClasse(), propDS.getClasse(), propDS);
-			String[] whereClause = mapping.getClauseWhere().split(";");
-			String[] propWhere;
 			String prop = null;
-			if(whereClause.length > 1) {
-				propWhere = whereClause[1].split(":");
-				if(propWhere[0].equalsIgnoreCase(propDS.getClasse().getPrefix()))
-					prop = propWhere[0];
+			if(mapping.getClauseWhere() != null) {
+				String[] whereClause = mapping.getClauseWhere().split(";");
+				String[] propWhere;
+				if(whereClause.length > 1) {
+					propWhere = whereClause[1].split(":");
+					if(propWhere[0].equalsIgnoreCase(propDS.getClasse().getPrefix()))
+						prop = propWhere[0];
+				}
 			}
 			
 			if(flgProp) { //Padrão MD2
@@ -78,7 +84,7 @@ public class ModuleCMS {
 				//Falta colocar diferenciacao entre o template T7 e T8 --Para já fica sempre o template T7
 				mapComment = Constants.PADRAO_MD2_T7;
 				prefixExp = ms.getPrefixes(7,input, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), prop, null); //Obtém os prefixos presentes na AM 
-				queryExp = ms.setQueryExp(7, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null);
+				queryExp = ms.setQueryExp(7, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, null);
 				if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV1()) && Constants.ATRIBUTOS(propDS.getPrefix(),propDS.getName()).equals(input.getFuncV2())) {
 					input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
 					input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?t"));
@@ -105,7 +111,7 @@ public class ModuleCMS {
 				listProps.add(input.getNameS());
 				uriExpProp = ms.getUriExp(listProps, mapping.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 				uriExp = uriExpProp[1];
-				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null);
+				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, null);
 				mapSPARQL = ms.createEmbedPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp, uriExpProp[0]);	
 			}
 			else{ //Padrão MD1
@@ -114,12 +120,18 @@ public class ModuleCMS {
 				if(input.getFuncValue() != null) {
 					input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
 				}
-				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null);
+				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
 				functionExp = ms.getFunctionExp(input.getFuncValue());
 				mapSPARQL = ms.createPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, functionExp);
 			}
 		}else if(input.getTypeT().equals("O") || input.getTypeS().equals("O")) { //Padrões de Propriedades de Objetos
-			Propriedades propDS = propService.findById(input.getIdS());
+			Propriedades propDS;
+			
+			if(input.isFlgExpPath())
+				propDS = propService.findById(input.getpSPath());
+			else
+				propDS = propService.findById(input.getIdS());
+			
 			Propriedades propDT = propService.findById(input.getIdT());
 			mapping = mapService.findMapClasse(propDT.getClasse(), propDS.getClasse(), propDS);
 			String[] propWhere;
@@ -137,7 +149,7 @@ public class ModuleCMS {
 			if(!flgMPC) { //Padrão MO1
 				mapComment = Constants.PADRAO_MO1;
 				prefixExp = ms.getPrefixes(6,input, classeSource, propD, null); //Obtém os prefixos presentes na AM 
-				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null);
+				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null, null);
 				mapSPARQL = ms.createPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, null, null);
 			}else {
 				Mapeamento mappingRange = mapService.findMapClasse(propDT.getRangeClasse(), propDS.getClasse(), propDS);
@@ -154,7 +166,7 @@ public class ModuleCMS {
 				listProps.add(input.getNameS());
 				uriExpProp = ms.getUriExp(listProps, mappingRange.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 				uriExp = uriExpProp[1];
-				queryExp = ms.setQueryExp(5, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, mappingRange.getClauseWhere(), mappingRange.getClauseFilter(), null);
+				queryExp = ms.setQueryExp(5, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, mappingRange.getClauseWhere(), mappingRange.getClauseFilter(), null, null);
 				mapSPARQL = ms.createEmbedObjectPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp);
 			}
 		}

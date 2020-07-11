@@ -56,21 +56,20 @@ public class ModuleCRM {
 							input.getFuncValue(),input.getNameT());
 			}else if(flgMPC)//Padrão MD3
 				mapRule = mp.createMD3mappingRule(classeSource, input.getNameS(), input.getFilter(), input.getNameT());
-			else //Padrão MD1
-				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), null, input.getValuePropS(), input.getFilter(), functionValue);			
+			else { //Padrão MD1
+				Propriedades pS = null;
+				if(input.getpSPath() != null)
+					pS = propService.findById(input.getpSPath());	
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), pS!= null ? Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()) : null, input.getValuePropS(), input.getFilter(), functionValue);			
+			}
 		} else if (input.getTypeT().equals("O") || input.getTypeS().equals("O")) {
 			if(flgMPC) //Padrão MO2
 				mapRule = mp.createMO2mappingRule(classeSource, input.getFilter(), input.getNameT());
-			else //Padrão MO1
-				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), null, input.getValuePropS(), input.getFilter(), null);
+			else { //Padrão MO1
+				Propriedades pS = propService.findById(input.getpSPath());	
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getValuePropS(), input.getFilter(), null);
+			}
 		}
-
-		//Obter o filtro f para colocar na regra de mapeamento
-//		if (input.getFilter() != null)
-//			mapRule = mapRule.concat(mp.addFilterToMapping(input.getValuePropS(), input.getFilter()));
-
-		
-			
 		
 		return mapRule;
 	}

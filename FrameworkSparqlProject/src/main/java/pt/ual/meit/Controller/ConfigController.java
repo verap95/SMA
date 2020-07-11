@@ -99,26 +99,51 @@ public class ConfigController {
 			objectPublic.setId(objectOWL_DAO.getAllClasses("T").get(i).getIdC());
 			objectPublic.setText(objectOWL_DAO.getAllClasses("T").get(i).getText());
 			objectPublic.setType("C");
+			objectPublic.setFlgPathExp(false);
 
 			for (Property p : objectOWL_DAO.getAllClasses("T").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
 				node.setId(p.getId());
 				node.setText(p.getName());
 				node.setType(p.getFlgType());
-				if (p.getClasse() != null) {
-					NodesPublicObject pC = new NodesPublicObject();
-					pC.setId(p.getClasse().getIdC());
-					pC.setText(p.getClasse().getText());
-					pC.setType("C");
-					pC.setNodes(null);
-					if (node.getNodes() != null)
-						node.getNodes().add(pC);
-					else {
-						List<NodesPublicObject> listNodes = new ArrayList<>();
-						listNodes.add(pC);
-						node.setNodes(listNodes);
-					}
-				}
+//				if (p.getClasse() != null) {
+//					NodesPublicObject pC = new NodesPublicObject();
+//					pC.setId(p.getClasse().getIdC());
+//					pC.setText(p.getClasse().getText());
+//					pC.setType("C");
+//					pC.setFlgPathExp(p.getClasse().isFlgPathExp());
+//					if(p.getClasse().getPropertiesList() != null) {
+//						List<NodesPublicObject> listSubNodes = new ArrayList<>();
+//						for(Property p1 : p.getClasse().getPropertiesList()) {
+//							NodesPublicObject n1 = new NodesPublicObject();
+//							n1.setId(p1.getId());
+//							n1.setText(p1.getName());
+//							n1.setType(p1.getFlgType());
+//							n1.setFlgPathExp(p1.isFlgPathExp());
+//							if(p1.getClasse() != null && p1.getClasse().getPropertiesList() != null) {
+//								List<NodesPublicObject> listSubNode = new ArrayList<>();
+//								for(Property p2 : p1.getClasse().getPropertiesList()) {
+//									NodesPublicObject n2 = new NodesPublicObject();
+//									n2.setId(p2.getId());
+//									n2.setText(p2.getName());
+//									n2.setType(p2.getFlgType());
+//									listSubNode.add(n2);
+//								}
+//								n1.setNodes(listSubNode);
+//								
+//							}
+//							listSubNodes.add(n1);
+//						}
+//						pC.setNodes(listSubNodes);
+//					}
+//					if (node.getNodes() != null)
+//						node.getNodes().add(pC);
+//					else {
+						//List<NodesPublicObject> listNodes = new ArrayList<>();
+						//listNodes.add(pC);
+						//node.setNodes(listNodes);
+//					}
+//				}
 
 				objectPublic.getNodes().add(node);
 
@@ -211,17 +236,33 @@ public class ConfigController {
 			objectPublic.setId(objectOWL_DAO.getAllClasses("S").get(i).getIdC());
 			objectPublic.setText(objectOWL_DAO.getAllClasses("S").get(i).getText());
 			objectPublic.setType("C");
+			objectPublic.setFlgPathExp(false);
 			for (Property p : objectOWL_DAO.getAllClasses("S").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
 				node.setId(p.getId());
 				node.setText(p.getName());
 				node.setType(p.getFlgType());
+				node.setFlgPathExp(p.isFlgPathExp());
 				if (p.getClasse() != null) {
 					NodesPublicObject pC = new NodesPublicObject();
 					pC.setId(p.getClasse().getIdC());
 					pC.setText(p.getClasse().getText());
 					pC.setType("C");
-					pC.setNodes(null);
+					pC.setFlgPathExp(p.getClasse().isFlgPathExp());
+					pC.setPsPath(p.getId());
+					if(p.getClasse().getPropertiesList() != null) {
+						List<NodesPublicObject> listSubNodes = new ArrayList<>();
+						for(Property p1 : p.getClasse().getPropertiesList()) {
+							NodesPublicObject n1 = new NodesPublicObject();
+							n1.setId(p1.getId());
+							n1.setText(p1.getName());
+							n1.setType(p1.getFlgType());
+							n1.setFlgPathExp(p1.isFlgPathExp());
+							n1.setPsPath(p.getId());
+							listSubNodes.add(n1);
+						}
+						pC.setNodes(listSubNodes);
+					}
 					if (node.getNodes() != null)
 						node.getNodes().add(pC);
 					else {
@@ -251,7 +292,10 @@ public class ConfigController {
 
 		if (!temp.getTypeS().equals("C") && !temp.getTypeT().equals("C")) { // Se não for mapeamento de classes
 			propT = propService.findById(temp.getIdT());
-			propS = propService.findById(temp.getIdS());
+			if(temp.isFlgExpPath())
+				propS = propService.findById(temp.getpSPath());
+			else
+				propS = propService.findById(temp.getIdS());
 			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse(), propS);
 			if (mapC == null) 
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -314,11 +358,12 @@ public class ConfigController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}", method = RequestMethod.GET, produces = {
+	@RequestMapping(value = "/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}&{flgPathExp}&{pSPath}", method = RequestMethod.GET, produces = {
 			"application/json" })
 	public @ResponseBody TempAssertive newAssertive(@RequestParam("nt") Integer idA, @RequestParam("tt") String typeT,
 			@RequestParam("ns") Integer idS, @RequestParam("ts") String typeS, @RequestParam("input") String input,
-			@RequestParam(value = "p1S", required = false) Integer p1S, @RequestParam(value = "listProps", required = false) List<String> listProps) {
+			@RequestParam(value = "p1S", required = false) Integer p1S, @RequestParam(value = "listProps", required = false) List<String> listProps, 
+			@RequestParam(value = "flgPathExp", required = false) boolean flgPathExp, @RequestParam(value = "pSPath", required = false) Integer pSPath) {
 		String a="";
 		Propriedades pS, pT, pSOld;
 		Classe cS, cT;
@@ -354,7 +399,12 @@ public class ConfigController {
 			}
 		} else {
 			if ((typeT.equals("D") || typeT.equals("O")) && (typeS.equals("D") || typeS.equals("O"))) {
-				pS = propService.findById(idS);
+				if(flgPathExp) {
+					pS = propService.findById(pSPath);
+				}else {
+					pS = propService.findById(idS);
+				}
+				
 				pT = propService.findById(idA);
 				
 				Mapeamento map = mapService.findMapClasse(pT.getClasse(),pS.getClasse(), pS);
@@ -373,7 +423,8 @@ public class ConfigController {
 										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
 										Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), flgPathExp,
+										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 							}
 						}else {
 							if(typeS.equals("D") && map.getListProps() != null && map.getListProps().contains(pS.getName())) {
@@ -388,7 +439,8 @@ public class ConfigController {
 									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
 									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), flgPathExp,
+									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 								prop1S = idS;
 							}
 						}
@@ -398,7 +450,8 @@ public class ConfigController {
 						Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 						Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
 						Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
-						Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()));
+						Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), flgPathExp,
+						Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 			} else if (typeT.equals("C") && typeS.equals("D")) {
 				cT = classService.findById(idA);
 				pS = propService.findById(idS);
@@ -419,6 +472,8 @@ public class ConfigController {
 		TempAssertive temp = new TempAssertive();
 		temp.setAssertive(a);
 		temp.setP1S(prop1S);
+		temp.setFlgExpPath(flgPathExp);
+		temp.setpSPath(pSPath);
 		temp.setListProps(listProps);
 		return temp;
 	}
@@ -470,9 +525,9 @@ public class ConfigController {
 		return output;
 	}
 	
-	@RequestMapping(value = "/newFunction", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody TempAssertive addFunction(@RequestBody TempAssertive temp) {
-		String assertiveFunction = MappingAssertive.addFunctionToAssertive(temp.getAssertive(), temp.getFuncValue());
+	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue) {
+		String assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
 		TempAssertive output = new TempAssertive();
 		output.setAssertive(assertiveFunction);
 		return output;

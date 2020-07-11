@@ -81,8 +81,39 @@ public class ObjectOWL_DAO implements ObjectOWL {
 				Classes c = new Classes();
 				c.setIdC(p.getRangeClasse().getId());
 				c.setText(Constants.ATRIBUTOS(p.getRangeClasse().getPrefix(), p.getRangeClasse().getName()));
+				c.setFlgPathExp(true);
+				if(p.getRangeClasse().getProp() != null) {
+					List<Property> subList = new ArrayList<>();
+					for(Propriedades p1 : p.getRangeClasse().getProp()) {
+						Property ps = new Property();
+						ps.setId(p1.getId());
+						ps.setName(Constants.ATRIBUTOS(p1.getPrefix(), p1.getName()));
+						ps.setFlgType(p1.getType());
+						ps.setFlgPathExp(true);
+						if(p1.getRangeClasse() != null) {
+							Classes c1 = new Classes();
+							c1.setIdC(p1.getRangeClasse().getId());
+							c1.setText(Constants.ATRIBUTOS(p1.getRangeClasse().getPrefix(), p1.getRangeClasse().getName()));
+							c1.setFlgPathExp(true);
+//							if(p1.getRangeClasse().getProp() != null) {
+//								List<Property> subListS = new ArrayList<>();
+//								for(Propriedades p2 : p1.getRangeClasse().getProp()) {
+//									Property ps2 = new Property();
+//									ps2.setId(p2.getId());
+//									ps2.setName(Constants.ATRIBUTOS(p2.getPrefix(), p2.getName()));
+//									ps2.setFlgType(p2.getType());
+//									subListS.add(ps2);
+//								}
+//							c1.setPropertiesList(subListS);	
+							ps.setClasse(c1);
+							
+							
+						}
+						subList.add(ps);
+					}
+					c.setPropertiesList(subList);
+				}
 				
-				c.setPropertiesList(null);
 				prop.setClasse(c);
 			}else
 				prop.setClasse(null);

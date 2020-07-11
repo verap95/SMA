@@ -13,8 +13,11 @@
     	$scope.pSOld = null;
     	$scope.checkboxProp2 = false;
     	$scope.valueFunc = null;
+    	$scope.flgPathExp = null;
+    	$scope.pSPath = null;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
     		var responseData = response.data;
+    		console.log(responseData);
     		 var options = {
 		    	data: responseData,
 		    	expandIcon: "fa fa-caret-right",
@@ -24,13 +27,13 @@
     		 $('#default-tree').treeview(options);
     		 
     		 $('#default-tree').on('nodeSelected', function(event, data){
-    			 	var config = {
-    			 		params:{
-    			 			id: data.id, 
-    			 			type: data.type
-    			 		}
-    			 	}
-    			 	$http.get("http://localhost:8080/configuration/ontologyTarget/{id}&{type}", config).then(function(response){
+				 	var config = {
+				 		params:{
+				 			id: data.id, 
+				 			type: data.type
+				 		}
+				 	}
+				 	$http.get("http://localhost:8080/configuration/ontologyTarget/{id}&{type}", config).then(function(response){
     			 			var dataR = response.data;
 			 				$scope.inputMA = dataR.aBasic;
 			 				$scope.idA = dataR.id;
@@ -60,7 +63,7 @@
  		    		$scope.regrasMapeamento = null;
  		    		$scope.assertives = null;
  		    		$scope.properties = null;
-		        	$scope.flgFilter = false; 		    		
+		        	$scope.flgFilter = false;
  		    	});
     		 });
     	});
@@ -68,6 +71,7 @@
     $scope.loadSource = function(){
     	$http.get("http://localhost:8080/configuration/loadOntologySource").then(function(response){
     		var data = response.data;
+    		console.log("Data Source: ", data);
     		$scope.listaS = data;
     		var options = {
     		    	data: data,
@@ -78,10 +82,13 @@
     		$('#treeSource').treeview(options);
         		 
         	$('#treeSource').on('nodeSelected', function(event, data){
+        		console.log(data.psPath);
         		$scope.$apply(function(){
         			$scope.idS = data.id;
         			$scope.nameS = data.text;
         			$scope.typeS = data.type;
+        			$scope.flgPathExp = data.flgPathExp;
+        			$scope.pSPath = data.psPath;
         		});
         	});
         	
@@ -106,7 +113,6 @@
 		else
 			$scope.flgFunction = false
 			
-    	console.log($scope.inputMA);
     	var config = {
 		 		params:{
 		 			nt: $scope.idA,
@@ -115,11 +121,13 @@
 		 			ts: $scope.typeS,
 		 			input: inputData, 
 		 			p1S: $scope.pSOld, 
-		 			listProps: $scope.listProps
+		 			listProps: $scope.listProps, 
+		 			flgPathExp: $scope.flgPathExp, 
+		 			pSPath : $scope.pSPath
 		 		}
 		 	}
     	
-	 	$http.get("http://localhost:8080/configuration/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}&{listProps}", config).then(function(response){
+	 	$http.get("http://localhost:8080/configuration/newAssertive/{nt}&{tt}&{ns}&{ts}&{input}&{p1S}&{listProps}&{flgPathExp}&{pSPath}", config).then(function(response){
 	 		$scope.inputMA = response.data.assertive;	
 	 		$scope.pSOld = response.data.p1S;
 	 		$scope.listProps = response.data.listProps;
@@ -140,7 +148,7 @@
     }
     
     $scope.saveMap = function(){
-    	console.log("Save mapping ** $scope.pSOld: " , $scope.pSOld , $scope.idS);
+    	console.log("Save mapping ** $scope.valueFilter: " ,$scope.valueFilter);
     	var requestData = {
     		idT : $scope.idA,
     		nameT: $scope.nameA,
@@ -157,8 +165,9 @@
     		funcV1: $scope.prop1, 
     		funcV2: $scope.prop2, 
     		fPO2: $scope.checkboxProp2, 
-    		listProps: $scope.listProps
-    		
+    		listProps: $scope.listProps, 
+    		flgExpPath: $scope.flgPathExp, 
+    		pSPath: $scope.pSPath    		
     	}
     	var config = { 
     		headers:{'Content-Type':'application/json'}
@@ -354,11 +363,12 @@
 		$scope.valueOfFunction = null;
 		$scope.propriedades = null;
 		var data = {
-			idTemp: $scope.idTemp, 
-			assertive: $scope.inputMA,
-			funcValue: $scope.valueFunction
+			params:{
+				assertive: $scope.inputMA,
+				funcValue: $scope.valueFunction
+			}
 		}
-		$http.get("http://localhost:8080/configuration/addFunction", data).then(function(response){
+		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}", data).then(function(response){
 	 		var dataR = response.data;
 				$scope.inputMA = dataR.assertive;		
 	 	});

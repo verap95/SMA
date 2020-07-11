@@ -5,6 +5,7 @@ public class Property {
 	private String name;
 	private String flgType;
 	private Classes classe;
+	private boolean flgPathExp;
 	
 	/**
 	 * 
@@ -59,6 +60,20 @@ public class Property {
 
 	public void setClasse(Classes classe) {
 		this.classe = classe;
+	}
+
+	/**
+	 * @return the flgPathExp
+	 */
+	public boolean isFlgPathExp() {
+		return flgPathExp;
+	}
+
+	/**
+	 * @param flgPathExp the flgPathExp to set
+	 */
+	public void setFlgPathExp(boolean flgPathExp) {
+		this.flgPathExp = flgPathExp;
 	}
 
 	

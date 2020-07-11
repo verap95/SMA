@@ -8,6 +8,7 @@ public class PublicObject {
 	private String text;
 	private String type;
 	private String aBasic;
+	private boolean flgPathExp;
 
 	private List<NodesPublicObject> nodes = new ArrayList<>();
 
@@ -63,6 +64,20 @@ public class PublicObject {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the flgPathExp
+	 */
+	public boolean isFlgPathExp() {
+		return flgPathExp;
+	}
+
+	/**
+	 * @param flgPathExp the flgPathExp to set
+	 */
+	public void setFlgPathExp(boolean flgPathExp) {
+		this.flgPathExp = flgPathExp;
 	}
 
 	

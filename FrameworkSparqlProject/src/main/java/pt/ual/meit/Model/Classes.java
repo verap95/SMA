@@ -8,7 +8,8 @@ public class Classes {
 	private String text;
 	private List<Property> propertiesList = new ArrayList<>();
 	private List<Mapping> mappingList = new ArrayList<>();
-
+	private boolean flgPathExp;
+	
 	/**
 	 * 
 	 */
@@ -55,6 +56,20 @@ public class Classes {
 
 	public void setIdC(Integer idC) {
 		this.idC = idC;
+	}
+
+	/**
+	 * @return the flgPathExp
+	 */
+	public boolean isFlgPathExp() {
+		return flgPathExp;
+	}
+
+	/**
+	 * @param flgPathExp the flgPathExp to set
+	 */
+	public void setFlgPathExp(boolean flgPathExp) {
+		this.flgPathExp = flgPathExp;
 	}
 
 	

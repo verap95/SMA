@@ -36,8 +36,12 @@ public class MappingAssertive {
 	}
 	
 	//MD1/MO1 - Mapeamento de Propriedades
-	public static String createAssertiveMappingProperties(String cS, String pS, String cT, String pT) {
-		String s = cT + " / " + pT + " ≡ " + cS + " / " + pS;
+	public static String createAssertiveMappingProperties(String cS, String pS, String cT, String pT, boolean flgPathExp, String pSPath) {
+		String s;
+		if(flgPathExp)
+			s = cT + " / " + pT + " ≡ " + cS + " / [" + pSPath +"/" + pS + "]";
+		else
+			s = cT + " / " + pT + " ≡ " + cS + " /" + pS;
 		return s;
 	}
 	

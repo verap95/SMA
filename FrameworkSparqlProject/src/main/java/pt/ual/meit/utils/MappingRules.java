@@ -36,7 +36,7 @@ public class MappingRules {
 			String path, String propSource, String filter, String function) {
 		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; ";
 		if(path != null ) {
-			s = s.concat(path + "/");
+			s = s.concat(path + " / ");
 		}
 		if(function != null) {
 			s = s.concat(pSource + "(s,x)");

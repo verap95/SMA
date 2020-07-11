@@ -19,7 +19,8 @@ public class TempAssertive {
 	private Integer p1S;
 	private Boolean fPO2;
 	private List<String> listProps;
-	private Integer idTemp;
+	private boolean flgExpPath;
+	private Integer pSPath;
 	
 	public TempAssertive() {
 		super();
@@ -155,5 +156,33 @@ public class TempAssertive {
 
 	public void setListProps(List<String> listProps) {
 		this.listProps = listProps;
+	}
+
+	/**
+	 * @return the flgExpPath
+	 */
+	public boolean isFlgExpPath() {
+		return flgExpPath;
+	}
+
+	/**
+	 * @param flgExpPath the flgExpPath to set
+	 */
+	public void setFlgExpPath(boolean flgExpPath) {
+		this.flgExpPath = flgExpPath;
+	}
+
+	/**
+	 * @return the pSPath
+	 */
+	public Integer getpSPath() {
+		return pSPath;
+	}
+
+	/**
+	 * @param pSPath the pSPath to set
+	 */
+	public void setpSPath(Integer pSPath) {
+		this.pSPath = pSPath;
 	}
 }
