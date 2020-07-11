@@ -6,6 +6,7 @@ import java.util.List;
 public class PublicObject {
 	private Integer id; 
 	private String text;
+	private String icon;
 	private String type;
 	private String aBasic;
 	private boolean flgPathExp;
@@ -78,6 +79,20 @@ public class PublicObject {
 	 */
 	public void setFlgPathExp(boolean flgPathExp) {
 		this.flgPathExp = flgPathExp;
+	}
+
+	/**
+	 * @return the icon
+	 */
+	public String getIcon() {
+		return icon;
+	}
+
+	/**
+	 * @param icon the icon to set
+	 */
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	

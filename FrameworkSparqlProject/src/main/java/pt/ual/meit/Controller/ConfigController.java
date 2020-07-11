@@ -100,12 +100,18 @@ public class ConfigController {
 			objectPublic.setText(objectOWL_DAO.getAllClasses("T").get(i).getText());
 			objectPublic.setType("C");
 			objectPublic.setFlgPathExp(false);
+			objectPublic.setIcon("fa fa-circle");
 
 			for (Property p : objectOWL_DAO.getAllClasses("T").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
 				node.setId(p.getId());
 				node.setText(p.getName());
 				node.setType(p.getFlgType());
+				if(p.getFlgType().equals("O"))
+					node.setIcon("fa fa-plus-square");
+				else
+					node.setIcon("far fa-square");
+				
 //				if (p.getClasse() != null) {
 //					NodesPublicObject pC = new NodesPublicObject();
 //					pC.setId(p.getClasse().getIdC());
@@ -237,12 +243,18 @@ public class ConfigController {
 			objectPublic.setText(objectOWL_DAO.getAllClasses("S").get(i).getText());
 			objectPublic.setType("C");
 			objectPublic.setFlgPathExp(false);
+			objectPublic.setIcon("fa fa-circle");
 			for (Property p : objectOWL_DAO.getAllClasses("S").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
 				node.setId(p.getId());
 				node.setText(p.getName());
 				node.setType(p.getFlgType());
 				node.setFlgPathExp(p.isFlgPathExp());
+				if(p.getFlgType().equals("O"))
+					node.setIcon("fa fa-plus-square");
+				else
+					node.setIcon("far fa-square");
+				
 				if (p.getClasse() != null) {
 					NodesPublicObject pC = new NodesPublicObject();
 					pC.setId(p.getClasse().getIdC());
@@ -250,6 +262,7 @@ public class ConfigController {
 					pC.setType("C");
 					pC.setFlgPathExp(p.getClasse().isFlgPathExp());
 					pC.setPsPath(p.getId());
+					pC.setIcon("fa fa-circle");
 					if(p.getClasse().getPropertiesList() != null) {
 						List<NodesPublicObject> listSubNodes = new ArrayList<>();
 						for(Property p1 : p.getClasse().getPropertiesList()) {
@@ -259,6 +272,10 @@ public class ConfigController {
 							n1.setType(p1.getFlgType());
 							n1.setFlgPathExp(p1.isFlgPathExp());
 							n1.setPsPath(p.getId());
+							if(p1.getFlgType().equals("O"))
+								n1.setIcon("fa fa-plus-square");
+							else
+								n1.setIcon("far fa-square");
 							listSubNodes.add(n1);
 						}
 						pC.setNodes(listSubNodes);
@@ -380,12 +397,16 @@ public class ConfigController {
 
 				if (p1S != null) {
 					pSOld = propService.findById(p1S);
+					Propriedades pPath = null;
+					if(flgPathExp)
+						pPath = propService.findById(pSPath);
 					a = MappingAssertive.createN1PropertyMapping(
 							Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 							Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()),
 							Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
 							Constants.ATRIBUTOS(pSOld.getPrefix(), pSOld.getName()),
-							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
+							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), 
+							flgPathExp, pPath != null ? Constants.ATRIBUTOS(pPath.getPrefix(), pPath.getName()): null);
 					prop1S = p1S;
 				} else if (typeT.equals("C")){
 					cT = classService.findById(idA);
@@ -419,9 +440,10 @@ public class ConfigController {
 										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()), 
 										mapping.getListProps());
 							}else { //Padrão MO1
+								Propriedades ps1 = propService.findById(idS);
 								a = MappingAssertive.createAssertiveMappingProperties(
 										Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
-										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+										Constants.ATRIBUTOS(ps1.getPrefix(), ps1.getName()),
 										Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 										Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), flgPathExp,
 										Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
@@ -435,9 +457,10 @@ public class ConfigController {
 											map.getListProps(),
 											Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
 							}else {
+								Propriedades ps1 = propService.findById(idS);
 								a = MappingAssertive.createAssertiveMappingProperties(
 									Constants.ATRIBUTOS(pS.getClasse().getPrefix(), pS.getClasse().getName()),
-									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()),
+									Constants.ATRIBUTOS(ps1.getPrefix(), ps1.getName()),
 									Constants.ATRIBUTOS(pT.getClasse().getPrefix(), pT.getClasse().getName()),
 									Constants.ATRIBUTOS(pT.getPrefix(), pT.getName()), flgPathExp,
 									Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()));
@@ -525,11 +548,18 @@ public class ConfigController {
 		return output;
 	}
 	
-	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue) {
-		String assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
+	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}&{p1S}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue, @RequestParam(value="p1S", required=false) Integer p1S) {
 		TempAssertive output = new TempAssertive();
-		output.setAssertive(assertiveFunction);
+		
+		if(p1S == null) {
+			String assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
+			output.setAssertive(assertiveFunction);
+		}else
+			output.setAssertive(assertive);
+		
+		
+		
 		return output;
 	}
 
@@ -550,12 +580,19 @@ public class ConfigController {
 	}
 	
 	@RequestMapping(value="/getPropertiesToList", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody List<String> getProperties(@RequestParam("idS") Integer idSource, @RequestParam("typeS") String typeS){
+	public @ResponseBody List<String> getProperties(@RequestParam("idS") Integer idSource, @RequestParam("typeS") String typeS,  @RequestParam(value="p1S", required=false)  Integer p1S){
 		List<String> listFunction = new ArrayList<>();
 		List<Propriedades> listP = new ArrayList<>();
 		if(!typeS.equals("C")) {
 			Propriedades pS = propService.findById(idSource);
-			listP = propService.findByClassID(pS.getClasse());
+//			if(typeF.equals("FILTER"))
+//				listP = propService.findByClassID(pS.getClasse());
+//			else
+				listP.add(pS);
+			if(p1S != null) {
+				Propriedades pS1 = propService.findById(p1S);
+				listP.add(pS1);
+			}
 		}else {
 			Classe cS = classService.findById(idSource);
 			listP = propService.findByClassID(cS);

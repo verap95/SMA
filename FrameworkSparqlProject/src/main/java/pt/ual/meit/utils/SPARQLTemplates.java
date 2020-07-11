@@ -168,31 +168,6 @@ public class SPARQLTemplates {
 		return t;
 	}
 		
-	// Padrão MD1/MO1 - Mapeamento de Propriedades
-	public String createPropertyMapping(String classeSource, String propTarget, String prefixExp, String queryExp) {
-//		String[] pS = source.split(":");
-//		String[] pT = target.split(":");
-//		String[] cS = classeSource.split(":");
-//		String s = "";
-//		if(!cS[0].equals(pS[0]))
-//			s += "PREFIX " + cS[0] + ": <" + prefix.getPrefixes(cS[0]) + "> \n";
-//		
-//		if(propWhere != null)
-//			s += "PREFIX " + propWhere + ": <" + prefix.getPrefixes(propWhere) + "> \n";
-//		
-//		s += "PREFIX " + pS[0] + ": <" + prefix.getPrefixes(pS[0]) + "> \n" + 
-//					"PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n" + 
-//					"CONSTRUCT { ?SUBJ " + target + " ?p . } \n" + 
-//					"WHERE { ?SUBJ queryExp" + " }";
-//		return s;
-		String t = Constants.TemplateT3.replace("prefixExp", prefixExp);
-		t = t.replace("Cs", classeSource);
-		t = t.replace("Pt", propTarget);
-		t = t.replace("queryExp", queryExp);
-		
-		return t;
-	}
-
 	// Padrão MD2 - Mapeamento de Propriedades
 	public String createN1PropertyMapping(String prefixExp, String Pt, String Cs, String Ps, String queryExp, String functionExp) {
 		String template; 
@@ -228,21 +203,7 @@ public class SPARQLTemplates {
 		t5 = t5.replace("Cs", Cs);
 		t5 = t5.replace("queryExp", queryExp);
 		t5 = t5.replace("uriExp", uriExp);
-//		
-//		String[] pS = source.split(":");
-//		String[] pT = target.split(":");
-//		String[] pCS = classeSource.split(":");
-//
-//		String s = "PREFIX " + pS[0] + ": <" + prefix.getPrefixes(pS[0]) + "> \n" + 
-//				"PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n";
-//
-//		if (!pS[0].equals(pCS[0]))
-//			s = s.concat("PREFIX " + pCS[0] + ": <" + prefix.getPrefixes(pCS[0]) + "> \n");
-//
-//		s += "CONSTRUCT { ?SUBJ " + target + " ?generatedURI . } \n" + 
-//				"WHERE { ?SUBJ queryExp \n"
-//					+ "BIND( IRI(CONCAT(STR(?SUBJ), ENCODE_FOR_URI(?p))) AS ?generatedURI) }";
-
+		
 		return t5;
 	}
 	
@@ -347,18 +308,27 @@ public class SPARQLTemplates {
 			case 7: //Template T7 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)
 			case 8: //Template T8 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)
 				domainWhereClause = domainWhereClause.replace(".", "");
-				if(domainFilterClause == null) {
-					if(flgOP2)
-						s = domainWhereClause + valuePropS + " ?s . OPTIONAL { ?SUBJ " + source + " ?t } ";
-					else
-						s = domainWhereClause + valuePropS + "?s ; " + source + " ?t .";
+				if(domainWhereClause.contains(";"))
+					domainWhereClause = domainWhereClause.replaceFirst(";", "");
+				if(!domainWhereClause.isEmpty())
+					s = domainWhereClause + ";";
+				if(psPath != null) {
+					s = s + psPath + "?a. ?a " + valuePropS + " ?s ";
+					if(flgOP2){
+						s = s + ". OPTIONAL { ?a "  + source + " ?t } ."; 
+					}else {
+						s = s + source + " ?t .";
+					}
 				}else {
 					if(flgOP2)
-						s = domainWhereClause + valuePropS + " ?s . OPTIONAL { ?SUBJ " + source + " ?t } " + domainFilterClause;
+						s = s + valuePropS + " ?s . OPTIONAL { ?SUBJ " + source + " ?t } .";
 					else
-						s = domainWhereClause + valuePropS + " ?s ; " + source + " ?t ." + domainFilterClause;
+						s = s + valuePropS + "?s ; " + source + " ?t .";
 				}
-				
+
+				if(domainFilterClause != null) {
+					s = s + domainFilterClause + ". ";
+				}				
 				break;
 			case 3: //Mapeamento de Propriedades de Objetos (MO1 e MO2)
 				if(domainFilterClause == null) {

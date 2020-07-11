@@ -62,7 +62,7 @@
 						<div class="col-md-12" style="text-align: center">
 							<button class="btn btn-primary" ng-click="loadSource()" ng-disabled="flgLoad == false || flgFull == true" data-toggle="modal"
 								data-target="#loadSourceModal">Ontologia Fonte</button>
-							<button class="btn btn-secondary" ng-click="loadFilter()" data-toggle="modal" data-target="#filterModal" ng-disabled="flgFilter == false">Filtros</button>
+							<button class="btn btn-secondary" ng-click="getPropList('FILTER')" data-toggle="modal" data-target="#filterModal" ng-disabled="flgFilter == false">Filtros</button>
 							<button class="btn btn-secondary" ng-click="loadTransform()" data-toggle="modal" data-target="#functionModal" ng-disabled="flgFunction == false">Funções
 								de Transformação</button>
 						</div>
@@ -155,7 +155,7 @@
 									<div class="col-sm-5">
 										<h6>Propriedades</h6>
 										<select class="custom-select" ng-model="valueProp">
-											<option ng-repeat="prop in properties" value="{{valueProp = prop.text}}">{{prop.text}}</option>
+											<option ng-repeat="prop in propList" value="{{valueProp = prop}}">{{prop}}</option>
 										</select>	
 									</div>
 									<div class="col-sm-3">
@@ -182,7 +182,7 @@
 							<div class="col-sm-12">
 								<h6>Filtro aplicado</h6>
 								<div class="input-group mb-3">
-								  <input type="text" class="form-control" ng-focus="applyValue()" ng-model="valueFilter">
+								  <input type="text" class="form-control" ng-focus="applyValue()" ng-model="tempValueFilter">
 								</div>
 							</div>
 						</div>

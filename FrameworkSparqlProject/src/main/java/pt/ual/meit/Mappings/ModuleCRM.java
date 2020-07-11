@@ -51,9 +51,13 @@ public class ModuleCRM {
 			}
 			if(flgProp) { //Padrão MD2
 				Propriedades pS = propService.findById(input.getP1S());
+				Propriedades pS1 = null;
+				if(input.getpSPath() != null)
+					pS1 = propService.findById(input.getpSPath());	
+				
 				mapRule = mp.createN1PropertyMapping(classeSource, 
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getNameS(), 
-							input.getFuncValue(),input.getNameT());
+							input.getFuncValue(),input.getNameT(), pS1 != null ? Constants.ATRIBUTOS(pS1.getPrefix(), pS1.getName()) : null);
 			}else if(flgMPC)//Padrão MD3
 				mapRule = mp.createMD3mappingRule(classeSource, input.getNameS(), input.getFilter(), input.getNameT());
 			else { //Padrão MD1

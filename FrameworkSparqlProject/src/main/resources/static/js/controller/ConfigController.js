@@ -9,6 +9,8 @@
     	$scope.nodeSource = null;
     	$scope.assertives = [];
     	$scope.valueFilterS = null;
+    	$scope.valueFilter = null;
+    	$scope.tempValueFilter = null;
     	$scope.valueFunction = null;
     	$scope.pSOld = null;
     	$scope.checkboxProp2 = false;
@@ -16,8 +18,8 @@
     	$scope.flgPathExp = null;
     	$scope.pSPath = null;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
-    		var responseData = response.data;
-    		console.log(responseData);
+    		 var responseData = response.data;
+    		 console.log(responseData);
     		 var options = {
 		    	data: responseData,
 		    	expandIcon: "fa fa-caret-right",
@@ -318,9 +320,12 @@
 //		   } 
 //	   }else{
 		   $scope.valueFilter = $scope.valueProp + " " + $scope.valueOperator + " " + $scope.value;
+		   $scope.tempValueFilter = $scope.valueFilter;
 		   if($scope.typeS == "C" && $scope.typeA == "C"){
 			   $scope.valueFilterS = "?o " + $scope.valueOperator + " " + $scope.value;
 		   } 
+		   
+		   
 //	   }
    }
    
@@ -353,9 +358,12 @@
    }
 
    $scope.newFilter = function(){
+	   	if($scope.valueFilter == null)
+	   		$scope.applyValue();
 		$scope.valueOperator = null;
 		$scope.value = null;
 		$scope.inputMA = $scope.inputMA + " / " + $scope.valueFilter;
+		$scope.tempValueFilter = null;
 		$('#filterModal').modal('hide');
    }
    
@@ -365,10 +373,11 @@
 		var data = {
 			params:{
 				assertive: $scope.inputMA,
-				funcValue: $scope.valueFunction
+				funcValue: $scope.valueFunction, 
+				p1S: $scope.pSOld
 			}
 		}
-		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}", data).then(function(response){
+		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}&{p1S}", data).then(function(response){
 	 		var dataR = response.data;
 				$scope.inputMA = dataR.assertive;		
 	 	});
@@ -392,15 +401,16 @@
 		  $scope.functionList = response.data;
 	  });
 	  
-	  $scope.getPropList();
+	  $scope.getPropList("FUNCTION");
   }	
   
-  $scope.getPropList = function(){
-	  console.log("Entrei no getPropList");
+  $scope.getPropList = function(a){
+	  console.log("Entrei no getPropList ", $scope.pSOld);
 	  var config = {
 		  params:{
 			  idS: $scope.idS, 
-			  typeS: $scope.typeS
+			  typeS: $scope.typeS, 
+			  p1S: $scope.pSOld
 		  }
 	  }
 		  

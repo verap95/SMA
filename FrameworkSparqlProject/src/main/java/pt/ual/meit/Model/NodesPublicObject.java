@@ -6,6 +6,7 @@ import java.util.List;
 public class NodesPublicObject {
 	private Integer id;
 	private String text;
+	private String icon;
 	private String type;
 	private String aBasic;
 	private boolean flgPathExp;
@@ -87,6 +88,20 @@ public class NodesPublicObject {
 	 */
 	public void setPsPath(Integer psPath) {
 		this.psPath = psPath;
+	}
+
+	/**
+	 * @return the icon
+	 */
+	public String getIcon() {
+		return icon;
+	}
+
+	/**
+	 * @param icon the icon to set
+	 */
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 
