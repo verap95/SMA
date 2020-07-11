@@ -86,16 +86,33 @@ public class ModuleCMS {
 				prefixExp = ms.getPrefixes(7,input, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), prop, null); //Obtém os prefixos presentes na AM 
 				queryExp = ms.setQueryExp(7, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
 				Propriedades propDS2 = propService.findById(input.getIdS());
+
+//				if(input.getOldFunction()!= null) {
 				if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV1()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV2())) {
-					input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
-					input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?t"));
+					input.setOldFunction(input.getOldFunction().replace(input.getFuncV1(), "?s"));
+					input.setOldFunction(input.getOldFunction().replace(input.getFuncV2(), "?t"));
 					
 				}else if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV2()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV1())) {
-					input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?t"));
-					input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?s"));
+					input.setOldFunction(input.getOldFunction().replace(input.getFuncV1(), "?t"));
+					input.setOldFunction(input.getOldFunction().replace(input.getFuncV2(), "?s"));
 				}else
 					return null;
-				String props = input.getFuncValue().replace("CONCAT(", "");
+				String props = input.getOldFunction().replace("CONCAT(", "");
+				if(input.getFuncValue() != null)
+					functionExp = input.getFuncValue().replace("v", "?p");
+//				}else {
+//					if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV1()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV2())) {
+//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
+//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?t"));
+//						
+//					}else if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV2()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV1())) {
+//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?t"));
+//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?s"));
+//					}else
+//						return null;
+//					props = input.getFuncValue().replace("CONCAT(", "");
+//				}
+				
 				if(props.contains("))")){
 					props = props.replace("))", ")");
 				}else {

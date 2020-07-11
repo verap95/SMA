@@ -14,6 +14,7 @@ public class TempAssertive {
 	private String filterS;
 	private String valuePropS;
 	private String funcValue;
+	private String oldFunction;
 	private String funcV1;
 	private String funcV2;
 	private Integer p1S;
@@ -184,5 +185,19 @@ public class TempAssertive {
 	 */
 	public void setpSPath(Integer pSPath) {
 		this.pSPath = pSPath;
+	}
+
+	/**
+	 * @return the oldFunction
+	 */
+	public String getOldFunction() {
+		return oldFunction;
+	}
+
+	/**
+	 * @param oldFunction the oldFunction to set
+	 */
+	public void setOldFunction(String oldFunction) {
+		this.oldFunction = oldFunction;
 	}
 }

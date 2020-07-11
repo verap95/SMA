@@ -42,9 +42,9 @@ public class ModuleCRM {
 		} else if (input.getTypeT().equals("D") && input.getTypeS().equals("D")) {
 			//Obter a função de transformação para colocar na regra de Mapeamento
 			String functionValue = null;
-			if(input.getFuncValue() != null) {
+			if(input.getOldFunction() != null) {
 				for(String key : Constants.getListFunctionString().keySet()) {
-					if(input.getFuncValue().contains(key)) {
+					if(input.getOldFunction().contains(key)) {
 						functionValue = Constants.getListFunctionString().get(key);
 					}
 				}
@@ -55,9 +55,10 @@ public class ModuleCRM {
 				if(input.getpSPath() != null)
 					pS1 = propService.findById(input.getpSPath());	
 				
+					
 				mapRule = mp.createN1PropertyMapping(classeSource, 
 							Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getNameS(), 
-							input.getFuncValue(),input.getNameT(), pS1 != null ? Constants.ATRIBUTOS(pS1.getPrefix(), pS1.getName()) : null);
+							input.getFuncValue(),input.getNameT(), pS1 != null ? Constants.ATRIBUTOS(pS1.getPrefix(), pS1.getName()) : null, input.getOldFunction());
 			}else if(flgMPC)//Padrão MD3
 				mapRule = mp.createMD3mappingRule(classeSource, input.getNameS(), input.getFilter(), input.getNameT());
 			else { //Padrão MD1

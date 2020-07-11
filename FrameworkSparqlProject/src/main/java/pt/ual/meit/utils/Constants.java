@@ -45,7 +45,7 @@ public final class Constants {
 	public static final String TemplateT8 = "PREFIX prefixExp" + 
 											"CONSTRUCT { ?SUBJ Pt ?v . } \n"+
 											"WHERE {?SUBJ a Cs ; queryExp \n" +
-											"BIND( CONCAT(Ps) AS ?p ) "+
+											"BIND( CONCAT(Ps) AS ?p ) ."+
 											"BIND( functionExp AS ?v )}";
 	
 	/*
@@ -97,7 +97,7 @@ public final class Constants {
 		HashMap<String, String> listFunction = new HashMap<String, String>();
 		listFunction.put("CONCAT", "concat");
 		listFunction.put("LCASE", "lower-case");
-		listFunction.put("REPLACE", "replace");
+		//listFunction.put("REPLACE", "replace");
 		return listFunction;
 	}
 	

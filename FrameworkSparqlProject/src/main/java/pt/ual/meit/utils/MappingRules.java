@@ -53,12 +53,23 @@ public class MappingRules {
 	}
 	
 	//MD2 - Mapeamento de Propriedades
-	public String createN1PropertyMapping(String cSource, String p1Source, String p2Source, String function, String pTarget, String path) {
+	public String createN1PropertyMapping(String cSource, String p1Source, String p2Source, String function, String pTarget, String path, String oldFunction) {
 		String s = pTarget + "(s,v) ← "+ cSource + "(s) ; ";
 		if(path != null) {
 			s = s.concat(path + " / ");
 		}
-		s = s.concat(p1Source + "(s,v1) ; " + p2Source + "(s,v2) ; " + function);
+		if(oldFunction.contains("))")) {
+			oldFunction = oldFunction.replace("))", "),v)");
+		}else
+			oldFunction = oldFunction.replace(p2Source, p2Source + "),v");
+		
+		oldFunction = oldFunction.replace(p1Source, "v1");
+		oldFunction = oldFunction.replace(p2Source, "v2");
+		
+		if(function != null)
+			s = s.concat(p1Source + "(s,v1) ; " + p2Source + "(s,v2) ; " + oldFunction + " ; "+ function);
+		else 
+			s = s.concat(p1Source + "(s,v1) ; " + p2Source + "(s,v2) ; " + oldFunction) ;
 		
 		return s;
 	}

@@ -548,17 +548,24 @@ public class ConfigController {
 		return output;
 	}
 	
-	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}&{p1S}", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue, @RequestParam(value="p1S", required=false) Integer p1S) {
+	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}&{p1S}&{oldFunction}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue, @RequestParam(value="p1S", required=false) Integer p1S, @RequestParam(value="oldFunction", required=false) String oldFunction) {
 		TempAssertive output = new TempAssertive();
-		
+		String assertiveFunction;
 		if(p1S == null) {
-			String assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
+			assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
 			output.setAssertive(assertiveFunction);
-		}else
-			output.setAssertive(assertive);
-		
-		
+		}else {
+//			if(oldFunction != null) {
+//				assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
+//				output.setAssertive(assertiveFunction);
+//				output.setFuncValue(funcValue);
+//			}else {
+				output.setAssertive(assertive);
+				output.setFuncValue(funcValue);
+				output.setOldFunction(oldFunction == null ? funcValue : oldFunction);
+//			}
+		}
 		
 		return output;
 	}

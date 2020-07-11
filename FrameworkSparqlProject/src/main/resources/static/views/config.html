@@ -221,7 +221,7 @@
 									</div>
 								</div>
 								<div class="row" style="margin-bottom: 2%">
-									<div class="col-sm-6" ng-show="typeOfFunction == 'String'">
+									<div class="col-sm-6" ng-show="typeOfFunction == 'String' && oldFunction == null">
 										<h6>Propriedades</h6>
 										<select class="custom-select" ng-model="prop1">
 											<option ng-repeat="p in propList" ng-value="p">{{p}}</option>
@@ -229,7 +229,7 @@
 <!-- 											<option value="endCareer">endCareer</option> -->
 										</select>	
 									</div>
-									<div class="col-sm-6" ng-show="valueOfFunction == 'CONCAT'">
+									<div class="col-sm-6" ng-show="valueOfFunction == 'CONCAT' && oldFunction == null">
 										<h6>Propriedades</h6>
 										<select class="custom-select" ng-model="prop2">
 											<option ng-repeat="p in propList" ng-value="p">{{p}}</option>
@@ -237,7 +237,7 @@
 										<input type="checkbox" ng-model="checkboxProp2"/>Opcional {{checkboxProp2}}
 									</div>
 								</div>
-								<div class="row">
+								<div class="row" ng-show="valueOfFunction == 'CONCAT' || valueOfFunction == 'REPLACE'">
 									<div class="col-sm-6">
 										<h6>Valor</h6>
 										<div class="input-group mb-3">

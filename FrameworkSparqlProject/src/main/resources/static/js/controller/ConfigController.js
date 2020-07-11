@@ -17,6 +17,9 @@
     	$scope.valueFunc = null;
     	$scope.flgPathExp = null;
     	$scope.pSPath = null;
+    	$scope.oldFunction =  null;
+    	$scope.tempProp1 = null;
+    	$scope.tempProp2 = null;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
     		 var responseData = response.data;
     		 console.log(responseData);
@@ -163,9 +166,10 @@
     		valuePropS: $scope.valueProp,
     		assertive : $scope.inputMA, 
     		funcValue: $scope.valueFunction, 
+    		oldFunction: $scope.oldFunction,
     		p1S: $scope.pSOld, 
-    		funcV1: $scope.prop1, 
-    		funcV2: $scope.prop2, 
+    		funcV1: $scope.tempProp1, 
+    		funcV2: $scope.tempProp2, 
     		fPO2: $scope.checkboxProp2, 
     		listProps: $scope.listProps, 
     		flgExpPath: $scope.flgPathExp, 
@@ -190,6 +194,9 @@
     		$scope.valueFilterS = null;
     		$scope.valueFunction = null;
     		$scope.pSOld = null;
+    		$scope.oldFunction = null;
+    		$scope.tempProp1 = null;
+    		$scope.tempProp2 = null;
     		
         	$http.get("http://localhost:8080/configuration/ontologyTarget/{id}&{type}", config2).then(function(response){
     	 		var dataR = response.data;
@@ -330,6 +337,7 @@
    }
    
    $scope.applyValueFunction = function(){
+	   console.log($scope.oldFunction);
 	   if($scope.typeOfFunction == 'String'){
 		   if($scope.prop2 != null){
 			   if($scope.checkboxProp2){
@@ -343,6 +351,9 @@
 				   }else 
 					   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.prop2 + ")";
 		   }else{
+			   if($scope.oldFunction != null){
+				   $scope.prop1 = "v";
+			   }
 			   if($scope.valueFunc != null){
 				   $scope.valueFunction = $scope.valueOfFunction + "(" + $scope.prop1 + "," + $scope.valueFunc + ")";
 			   }else{
@@ -368,18 +379,32 @@
    }
    
    $scope.newFunction = function(){
+	   
 		$scope.valueOfFunction = null;
 		$scope.propriedades = null;
 		var data = {
 			params:{
 				assertive: $scope.inputMA,
 				funcValue: $scope.valueFunction, 
-				p1S: $scope.pSOld
+				p1S: $scope.pSOld, 
+				oldFunction: $scope.oldFunction
 			}
 		}
-		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}&{p1S}", data).then(function(response){
+		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}&{p1S}&{oldFunction}", data).then(function(response){
 	 		var dataR = response.data;
-				$scope.inputMA = dataR.assertive;		
+			$scope.inputMA = dataR.assertive;	
+			$scope.oldFunction = dataR.oldFunction;
+			if($scope.oldFunction == $scope.valueFunction){
+				$scope.valueFunction = null;
+				$scope.tempProp1 = $scope.prop1;
+				$scope.tempProp2 = $scope.prop2;
+			}else{
+				$scope.valueFunction = dataR.funcValue;
+			}
+			
+			$scope.typeOfFunction = null;
+			$scope.prop2 = null;
+			$scope.prop1 = null;
 	 	});
 		
 		$('#functionModal').modal('hide');
