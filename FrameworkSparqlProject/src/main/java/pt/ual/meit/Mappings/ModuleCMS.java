@@ -149,8 +149,8 @@ public class ModuleCMS {
 			if(!flgMPC) { //Padrão MO1
 				mapComment = Constants.PADRAO_MO1;
 				prefixExp = ms.getPrefixes(6,input, classeSource, propD, null); //Obtém os prefixos presentes na AM 
-				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null, null);
-				mapSPARQL = ms.createPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, null, null);
+				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
+				mapSPARQL = ms.createPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, null);
 			}else {
 				Mapeamento mappingRange = mapService.findMapClasse(propDT.getRangeClasse(), propDS.getClasse(), propDS);
 				whereClause = mapping.getClauseWhere().split(";");

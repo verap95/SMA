@@ -169,22 +169,28 @@ public class SPARQLTemplates {
 	}
 		
 	// Padrão MD1/MO1 - Mapeamento de Propriedades
-	public String createPropertyMapping(String source, String target, String prefixExp, String classeSource, String propWhere, String nnn) {
-		String[] pS = source.split(":");
-		String[] pT = target.split(":");
-		String[] cS = classeSource.split(":");
-		String s = "";
-		if(!cS[0].equals(pS[0]))
-			s += "PREFIX " + cS[0] + ": <" + prefix.getPrefixes(cS[0]) + "> \n";
+	public String createPropertyMapping(String classeSource, String propTarget, String prefixExp, String queryExp) {
+//		String[] pS = source.split(":");
+//		String[] pT = target.split(":");
+//		String[] cS = classeSource.split(":");
+//		String s = "";
+//		if(!cS[0].equals(pS[0]))
+//			s += "PREFIX " + cS[0] + ": <" + prefix.getPrefixes(cS[0]) + "> \n";
+//		
+//		if(propWhere != null)
+//			s += "PREFIX " + propWhere + ": <" + prefix.getPrefixes(propWhere) + "> \n";
+//		
+//		s += "PREFIX " + pS[0] + ": <" + prefix.getPrefixes(pS[0]) + "> \n" + 
+//					"PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n" + 
+//					"CONSTRUCT { ?SUBJ " + target + " ?p . } \n" + 
+//					"WHERE { ?SUBJ queryExp" + " }";
+//		return s;
+		String t = Constants.TemplateT3.replace("prefixExp", prefixExp);
+		t = t.replace("Cs", classeSource);
+		t = t.replace("Pt", propTarget);
+		t = t.replace("queryExp", queryExp);
 		
-		if(propWhere != null)
-			s += "PREFIX " + propWhere + ": <" + prefix.getPrefixes(propWhere) + "> \n";
-		
-		s += "PREFIX " + pS[0] + ": <" + prefix.getPrefixes(pS[0]) + "> \n" + 
-					"PREFIX " + pT[0] + ": <" + prefix.getPrefixes(pT[0]) + "> \n" + 
-					"CONSTRUCT { ?SUBJ " + target + " ?p . } \n" + 
-					"WHERE { ?SUBJ queryExp" + " }";
-		return s;
+		return t;
 	}
 
 	// Padrão MD2 - Mapeamento de Propriedades

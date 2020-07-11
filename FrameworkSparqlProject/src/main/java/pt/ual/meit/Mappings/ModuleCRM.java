@@ -60,14 +60,16 @@ public class ModuleCRM {
 				Propriedades pS = null;
 				if(input.getpSPath() != null)
 					pS = propService.findById(input.getpSPath());	
-				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), pS!= null ? Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()) : null, input.getValuePropS(), input.getFilter(), functionValue);			
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), pS != null ? Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()) : null, input.getValuePropS(), input.getFilter(), functionValue);			
 			}
 		} else if (input.getTypeT().equals("O") || input.getTypeS().equals("O")) {
 			if(flgMPC) //Padrão MO2
 				mapRule = mp.createMO2mappingRule(classeSource, input.getFilter(), input.getNameT());
 			else { //Padrão MO1
-				Propriedades pS = propService.findById(input.getpSPath());	
-				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()), input.getValuePropS(), input.getFilter(), null);
+				Propriedades pS = null;
+				if(input.getpSPath() != null)
+					propService.findById(input.getpSPath());	
+				mapRule = mp.createMD1_MO1MappingRule(classeSource, input.getNameS(), input.getNameT(), pS != null ? Constants.ATRIBUTOS(pS.getPrefix(), pS.getName()) : null, input.getValuePropS(), input.getFilter(), null);
 			}
 		}
 		
