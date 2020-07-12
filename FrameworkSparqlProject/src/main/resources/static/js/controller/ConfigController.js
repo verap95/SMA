@@ -2,6 +2,7 @@
 
   angular.module('SparqlFramework', [])
     .controller('ConfigController', function ($scope, $http) {
+    	$scope.loading = true;
     	$scope.flgFilter = false;
     	$scope.flgFunction = false;
     	$scope.flgLoad = false;
@@ -21,6 +22,7 @@
     	$scope.tempProp1 = null;
     	$scope.tempProp2 = null;
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
+    		$scope.loading = false;
     		 var responseData = response.data;
     		 console.log(responseData);
     		 var options = {

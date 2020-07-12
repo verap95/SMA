@@ -63,11 +63,9 @@ public class ClasseService {
 		return classe;
 	}
 
-//	public void deleteAllClasses() {
-//		List<Classe> classes = findAll();
-//		assertivaRepository.deleteAllAssertivesForClasse(classes);
-//		classeRepository.deleteAll();
-//		System.out.println("Delete all classes");
-//	}
+	public void deleteAllClasses() {
+		classeRepository.deleteAll();
+		System.out.println("Delete all classes");
+	}
 
 }

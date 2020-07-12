@@ -34,12 +34,15 @@ public class ConfigService {
 
 	public Iterable<ConfigOntology> findAll() {
 		Iterable<ConfigOntology> config = configOntologyRepository.findAll();
-
 		return config;
 	}
 
 	public ConfigOntology findByTOntology(String tOntology) {
 		ConfigOntology config = configOntologyRepository.findByTOntologia(tOntology);
 		return config;
+	}
+	
+	public void deleteAllConfig() {
+		configOntologyRepository.deleteAll();
 	}
 }

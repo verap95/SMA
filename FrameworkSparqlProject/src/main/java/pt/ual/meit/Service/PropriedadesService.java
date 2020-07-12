@@ -49,4 +49,8 @@ public class PropriedadesService {
 		
 		return getResult;
 	}
+	
+	public void deleteAllProp() {
+		propriedadesRepository.deleteAll();
+	}
 }

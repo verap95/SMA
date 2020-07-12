@@ -133,4 +133,8 @@ public class MappingService {
 		Mapeamento mapC = mappingRepository.findByClasseTargetIdAndPropriedadeSourceId(classeT, propS);
 		return mapC;
 	}
+	
+	public void deleteAllMapping() {
+		mappingRepository.deleteAll();
+	}
 }

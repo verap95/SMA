@@ -17,7 +17,9 @@ import pt.ual.meit.JPA.ConfigOntology;
 import pt.ual.meit.Model.MappingConfiguration;
 import pt.ual.meit.Service.ClasseService;
 import pt.ual.meit.Service.ConfigService;
+import pt.ual.meit.Service.MappingService;
 import pt.ual.meit.Service.OntologyBuilder;
+import pt.ual.meit.Service.PropriedadesService;
 
 @Controller
 public class MainController {
@@ -30,6 +32,12 @@ public class MainController {
 
 	@Autowired
 	ClasseService classService;
+	
+	@Autowired
+	MappingService mapService;
+	
+	@Autowired
+	PropriedadesService propService;
 
 	private ObjectOWL_DAO objectOWL_DAO = new ObjectOWL_DAO();
 
@@ -44,8 +52,11 @@ public class MainController {
 			@RequestPart(value = "fileT", required = false) MultipartFile fileT,
 			@RequestPart("requestData") MappingConfiguration mappingConfiguration) {
 
-		if (configService.findAll() != null) {
-			//classService.deleteAllClasses();
+		if (configService.findAll().iterator().hasNext()) {
+			mapService.deleteAllMapping();
+			propService.deleteAllProp();
+			classService.deleteAllClasses();
+			configService.deleteAllConfig();
 			objectOWL_DAO.getAllClasses("S").clear();
 			objectOWL_DAO.getAllClasses("T").clear();
 

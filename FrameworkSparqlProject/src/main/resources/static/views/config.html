@@ -49,7 +49,11 @@
 						style="border: 1px solid black; height: 100%;">
 						<h4 class="card-title" style="text-align: center; padding: 2%;">Ontologia
 							Alvo</h4>
-						<div id="default-tree"></div>
+						<div class="scrollbar scrollbar-primary"> 
+							<div class="force-overflow">
+								<div id="default-tree"></div>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -325,7 +329,12 @@
 				</div>
 			</div>
 		</div>
+		<div ng-show="loading" class="loading">
+    		<img id="imgLoading" src="img/loading-page.gif">
+		</div>
 	</div>
+	
+
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"
