@@ -313,7 +313,8 @@ public class ConfigController {
 				propS = propService.findById(temp.getpSPath());
 			else
 				propS = propService.findById(temp.getIdS());
-			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse(), propS);
+			Mapeamento mapC = mapService.findMapClasse(propT.getClasse(), propS.getClasse(), propS); //Find map classe
+			
 			if (mapC == null) 
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			else {
@@ -322,13 +323,29 @@ public class ConfigController {
 						return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 				
 			}
+			Mapeamento mapR = null;
+			if(propT.getRangeClasse() != null) {
+				 mapR = mapService.findMapClasse(propT.getRangeClasse(), propS.getClasse(), propS);
+				if(mapR == null) {
+					mapR = mapService.findMapClasse(propT.getRangeClasse(), propS.getRangeClasse(), propS);
+					if(mapR == null)
+						return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+				}else {
+					if(mapR.getListProps() == null)
+						if(!mapR.getListProps().contains(temp.getNameS()))
+							return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+					
+				}
+			}
+			
+			
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
 				System.out.println("IF correto - Padrão MD2");
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
-			}else if(temp.getListProps() != null && !temp.getListProps().isEmpty()) { //Padrão MD3 e MO2
+			}else if(propT.getRangeClasse() != null && mapR.getListProps() != null && !mapR.getListProps().isEmpty()) { //Padrão MD3 e MO2
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
 			}else{ //Padrões MD1 e MO1
@@ -548,22 +565,31 @@ public class ConfigController {
 		return output;
 	}
 	
-	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}&{p1S}&{oldFunction}", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue, @RequestParam(value="p1S", required=false) Integer p1S, @RequestParam(value="oldFunction", required=false) String oldFunction) {
+	@RequestMapping(value = "/newFunction/{assertive}&{funcValue}&{idS}&{p1S}&{oldFunction}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public @ResponseBody TempAssertive addFunction(@RequestParam("assertive") String assertive, @RequestParam("funcValue") String funcValue,  @RequestParam(value="idS", required=false) Integer idS,
+			@RequestParam(value="p1S", required=false) Integer p1S, @RequestParam(value="oldFunction", required=false) String oldFunction) {
 		TempAssertive output = new TempAssertive();
 		String assertiveFunction;
 		if(p1S == null) {
 			assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
 			output.setAssertive(assertiveFunction);
+			output.setOldFunction(oldFunction == null ? funcValue : oldFunction);
 		}else {
-//			if(oldFunction != null) {
+			if(p1S.equals(idS)){
+				assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
+				output.setAssertive(assertiveFunction);
+				output.setOldFunction(oldFunction == null ? funcValue : oldFunction);
+			}else {
+				output.setAssertive(assertive);
+				output.setFuncValue(funcValue);
+				output.setOldFunction(oldFunction == null ? funcValue : oldFunction);
+			}
+			//if(oldFunction != null) {
 //				assertiveFunction = MappingAssertive.addFunctionToAssertive(assertive, funcValue);
 //				output.setAssertive(assertiveFunction);
 //				output.setFuncValue(funcValue);
 //			}else {
-				output.setAssertive(assertive);
-				output.setFuncValue(funcValue);
-				output.setOldFunction(oldFunction == null ? funcValue : oldFunction);
+				
 //			}
 		}
 		
@@ -596,7 +622,7 @@ public class ConfigController {
 //				listP = propService.findByClassID(pS.getClasse());
 //			else
 				listP.add(pS);
-			if(p1S != null) {
+			if(p1S != null && !p1S.equals(idSource)) {
 				Propriedades pS1 = propService.findById(p1S);
 				listP.add(pS1);
 			}

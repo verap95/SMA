@@ -129,17 +129,21 @@ public class ModuleCMS {
 				listProps.add(input.getNameS());
 				uriExpProp = ms.getUriExp(listProps, mapping.getListProps()); //Obtém os valores das propriedades A1 ... An presentes na AM e concatena-os
 				uriExp = uriExpProp[1];
-				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, null);
+				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null, null);
 				mapSPARQL = ms.createEmbedPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp, uriExpProp[0]);	
 			}
 			else{ //Padrão MD1
 				mapComment = Constants.PADRAO_MD1;
 				prefixExp = ms.getPrefixes(6,input, classeSource, prop, null); //Obtém os prefixos presentes na AM 
-				if(input.getFuncValue() != null) {
-					input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
+				if(input.getOldFunction() != null) {
+					input.setOldFunction(input.getOldFunction().replace(input.getFuncV1(), "?s"));
 				}
-				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
-				functionExp = ms.getFunctionExp(input.getFuncValue());
+				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getOldFunction() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
+				if(input.getFilter() != null) {
+					String[] filter = ms.getFilterExp(queryExp, input.getFilter());
+					queryExp = filter[0];
+				}
+				functionExp = ms.getFunctionExp(input.getOldFunction());
 				mapSPARQL = ms.createPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, functionExp);
 			}
 		}else if(input.getTypeT().equals("O") || input.getTypeS().equals("O")) { //Padrões de Propriedades de Objetos

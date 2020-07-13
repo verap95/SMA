@@ -41,10 +41,14 @@ public class MappingRules {
 		if(function != null) {
 			s = s.concat(pSource + "(s,x)");
 		}else {
-			s = s.concat(pSource + "(s,v)");
+			s = s.concat(pSource);
+			if(filter != null) {
+				s = s.concat("(s,t)");
+			}else
+				s = s.concat("(s,v)");
 		}
 		if(filter != null) {
-			s = s.concat(" ; " + filter.replace(propSource, propSource + "(s,u) ; "));
+			s = s.concat(" ; " + filter.replace(propSource, propSource + "(t,v)"));
 		}
 		if(function != null) {
 			s = s.concat( "; " + function + "(x,v)");

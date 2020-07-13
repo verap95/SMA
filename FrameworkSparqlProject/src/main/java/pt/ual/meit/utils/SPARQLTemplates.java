@@ -98,7 +98,10 @@ public class SPARQLTemplates {
 					if(sources[i].equals(props.get(0))) {
 						temp = "?A" + (i+1);
 					}
-					prop = "CONCAT("+t+")";
+					if((i+1) == sources.length) 
+						prop = t;
+					else
+						prop = "CONCAT("+t+")";
 				}
 			}else {
 				prop = "?A1";
@@ -304,6 +307,7 @@ public class SPARQLTemplates {
 							s = s + " ?p ."+ domainFilterClause;
 					}
 				}
+				
 				break;
 			case 7: //Template T7 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)
 			case 8: //Template T8 - Mapeamento de Propriedades de Tipos de Dados (Padrão MD2)

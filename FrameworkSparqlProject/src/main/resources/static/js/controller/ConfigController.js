@@ -199,6 +199,7 @@
     		$scope.oldFunction = null;
     		$scope.tempProp1 = null;
     		$scope.tempProp2 = null;
+    		$scope.listProps = null;
     		
         	$http.get("http://localhost:8080/configuration/ontologyTarget/{id}&{type}", config2).then(function(response){
     	 		var dataR = response.data;
@@ -388,11 +389,12 @@
 			params:{
 				assertive: $scope.inputMA,
 				funcValue: $scope.valueFunction, 
+				idS : $scope.idS,
 				p1S: $scope.pSOld, 
 				oldFunction: $scope.oldFunction
 			}
 		}
-		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}&{p1S}&{oldFunction}", data).then(function(response){
+		$http.get("http://localhost:8080/configuration/newFunction/{assertive}&{funcValue}&{idS}&{p1S}&{oldFunction}", data).then(function(response){
 	 		var dataR = response.data;
 			$scope.inputMA = dataR.assertive;	
 			$scope.oldFunction = dataR.oldFunction;
@@ -445,5 +447,13 @@
 		  console.log(response.data);
 		  $scope.propList = response.data;
 	  });
+  }
+  
+  $scope.clearModal = function(){
+	  $scope.valueOfFunction = null;
+	  $scope.propriedades = null;
+	  $scope.typeOfFunction = null;
+	  $scope.prop2 = null;
+	  $scope.prop1 = null;
   }
 });
