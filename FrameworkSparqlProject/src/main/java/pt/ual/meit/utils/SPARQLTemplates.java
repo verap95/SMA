@@ -327,7 +327,7 @@ public class SPARQLTemplates {
 					if(flgOP2)
 						s = s + valuePropS + " ?s . OPTIONAL { ?SUBJ " + source + " ?t } .";
 					else
-						s = s + valuePropS + "?s ; " + source + " ?t .";
+						s = s + valuePropS + " ?s ; " + source + " ?t .";
 				}
 
 				if(domainFilterClause != null) {

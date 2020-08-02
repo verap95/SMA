@@ -100,7 +100,7 @@ public class ConfigController {
 			objectPublic.setText(objectOWL_DAO.getAllClasses("T").get(i).getText());
 			objectPublic.setType("C");
 			objectPublic.setFlgPathExp(false);
-			objectPublic.setIcon("fa fa-circle");
+			objectPublic.setIcon("fa fa-circle yellow");
 
 			for (Property p : objectOWL_DAO.getAllClasses("T").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
@@ -108,9 +108,9 @@ public class ConfigController {
 				node.setText(p.getName());
 				node.setType(p.getFlgType());
 				if(p.getFlgType().equals("O"))
-					node.setIcon("fa fa-plus-square");
+					node.setIcon("fa fa-square blue");
 				else
-					node.setIcon("far fa-square");
+					node.setIcon("fa fa-square green");
 				
 //				if (p.getClasse() != null) {
 //					NodesPublicObject pC = new NodesPublicObject();
@@ -243,7 +243,7 @@ public class ConfigController {
 			objectPublic.setText(objectOWL_DAO.getAllClasses("S").get(i).getText());
 			objectPublic.setType("C");
 			objectPublic.setFlgPathExp(false);
-			objectPublic.setIcon("fa fa-circle");
+			objectPublic.setIcon("fa fa-circle yellow");
 			for (Property p : objectOWL_DAO.getAllClasses("S").get(i).getPropertiesList()) {
 				NodesPublicObject node = new NodesPublicObject();
 				node.setId(p.getId());
@@ -251,9 +251,9 @@ public class ConfigController {
 				node.setType(p.getFlgType());
 				node.setFlgPathExp(p.isFlgPathExp());
 				if(p.getFlgType().equals("O"))
-					node.setIcon("fa fa-plus-square");
+					node.setIcon("fa fa-square blue");
 				else
-					node.setIcon("far fa-square");
+					node.setIcon("fa fa-square green");
 				
 				if (p.getClasse() != null) {
 					NodesPublicObject pC = new NodesPublicObject();
@@ -262,7 +262,7 @@ public class ConfigController {
 					pC.setType("C");
 					pC.setFlgPathExp(p.getClasse().isFlgPathExp());
 					pC.setPsPath(p.getId());
-					pC.setIcon("fa fa-circle");
+					pC.setIcon("fa fa-circle yellow");
 					if(p.getClasse().getPropertiesList() != null) {
 						List<NodesPublicObject> listSubNodes = new ArrayList<>();
 						for(Property p1 : p.getClasse().getPropertiesList()) {
@@ -273,9 +273,9 @@ public class ConfigController {
 							n1.setFlgPathExp(p1.isFlgPathExp());
 							n1.setPsPath(p.getId());
 							if(p1.getFlgType().equals("O"))
-								n1.setIcon("fa fa-plus-square");
+								n1.setIcon("fa fa-square blue");
 							else
-								n1.setIcon("far fa-square");
+								n1.setIcon("fa fa-square green");
 							listSubNodes.add(n1);
 						}
 						pC.setNodes(listSubNodes);
@@ -345,10 +345,13 @@ public class ConfigController {
 				System.out.println("IF correto - Padrão MD2");
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
-			}else if(propT.getRangeClasse() != null && mapR.getListProps() != null && !mapR.getListProps().isEmpty()) { //Padrão MD3 e MO2
+			}else if(propT.getRangeClasse() != null && mapR.getListProps() != null && !mapR.getListProps().isEmpty()) { //Padrão MO2
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
-			}else{ //Padrões MD1 e MO1
+			}else if(mapC.getListProps() != null && !mapC.getListProps().isEmpty()){ //Padrão MD3
+				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, true);
+				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, true, temp.getfPO2());
+			}else{//Padrões MD1 e MO1
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, false, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, false, false, temp.getfPO2());
 			}
