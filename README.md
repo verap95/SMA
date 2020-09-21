@@ -16,3 +16,12 @@ Esta ferramenta é constituida por 4 partes:
 * **Parte 3- configuração para a geração de mapeamentos:** através do módulo ER, o utilizador introduz o ficheiro com o Dataset da ontologia fonte e identifica a linguagem de serialização em que o mesmo está escrito. Além disso, também escolhe qual a linguagem de serialização que deseja aquando da geração de triplos;
 
 * **Parte 4 - geração de triplos através dos mapeamentos SPARQL 1.1:** a partir dos pontos anteriores, a nossa ferramenta irá retornar um ficheiro com todos os resultados na linguagem de serialização escolhida.
+
+Além disso, a partir do:
+
+* **Módulo CRM –** é possível obter a lista de todas as regras de mapeamento
+
+* **Módulo CMS –** é possível obter a lista de todos os mapeamentos SPARQL
+
+* **Módulo GUI –** é possível obter a lista de todas as assertivas de mapeamento
+
