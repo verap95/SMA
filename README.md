@@ -25,3 +25,21 @@ Além disso, a partir do:
 
 * **Módulo GUI –** é possível obter a lista de todas as assertivas de mapeamento
 
+## Requisitos:
+
+* Java 8 ou superior
+
+## Manual de Instalação:
+
+1. Na pasta target (onde se encontra o jar executável) executar o seguinte comando: 
+
+```
+java -jar .\FrameworkSparqlProject-0.0.1-SNAPSHOT.jar
+
+```
+
+**Nota:** É necessário possuir o java como variável de ambiente, de modo a ser possível executar este comando. Para mais informações consultar: https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html Caso não possua esta variável de ambiente, mas possua o java, efetue este comando no diretório do java com o caminho completo para o jar.
+
+2. A aplicação está pronta a utilizar. :smiley:
+
+
