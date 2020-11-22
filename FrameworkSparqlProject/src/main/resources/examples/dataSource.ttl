@@ -1,0 +1,99 @@
+@prefix dbo: <http://dbpedia.org/ontology/> .
+
+dbo:A_Culpa_E_Das_Estrelas a dbo:Book;
+	dbo:isbn "978-989-232-095-3";
+	dbo:literaryGenre "Romance";
+	dbo:firstPublicationDate "2014";
+	dbo:originalTitle "A culpa é das estrelas";
+	dbo:originalLanguage dbo:Portuguese;
+	dbo:MediaType "E-Book";
+	dbo:author dbo:John_Green;
+	dbo:publisher dbo:ASA.
+
+dbo:Como_Eu_Era_Antes_De_Voce a dbo:Book;
+	dbo:isbn "978-85-8057-924-6";
+	dbo:literaryGenre "Romance";
+	dbo:firstPublicationDate "2016";
+	dbo:originalTitle "Como eu era antes de você";
+	dbo:originalLanguage dbo:Portuguese;
+	dbo:author dbo:Jojo_Moyes;
+	dbo:MediaType "Book";
+	dbo:publisher dbo:INTRINSECA.
+	
+dbo:As_Ruinas a dbo:Book;
+	dbo:isbn "978-85-9807-820-5";
+	dbo:literaryGenre "Terror";
+	dbo:originalTitle "As ruinas";
+	dbo:originalLanguage dbo:Portuguese.
+
+dbo:The_Exorcist a dbo:Book;
+	dbo:isbn "978-00-6100-722-4";
+	dbo:literaryGenre "Terror";
+	dbo:originalTitle "The Exorcist";
+	dbo:originalLanguage dbo:English;
+	dbo:MediaType "Book";
+	dbo:author dbo:William_Blatty;
+	dbo:publisher dbo:Harper.
+	
+dbo:The_100 a dbo:Book;
+	dbo:isbn "978-14-4476-688-2";
+	dbo:literaryGenre "Ficção Ciêntifica";
+	dbo:originalTitle "The 100";
+	dbo:author dbo:Kass_Morgan;
+	dbo:originalLanguage dbo:English;
+	dbo:MediaType "Book".
+
+dbo:Perdida_no_espaço a dbo:Book;
+	dbo:isbn "978-97-2253-742-1";
+	dbo:literaryGenre "Ficção Ciêntifica";
+	dbo:originalTitle "Perdida no espaço";
+	dbo:originalLanguage dbo:Portuguese;
+	dbo:MediaType "E-Book".
+
+dbo:O_Povo_do_Abismo a dbo:Book;
+	dbo:isbn "978-97-2608-350-4";
+	dbo:literaryGenre "Crónicas";
+	dbo:firstPublicationDate "2019";
+	dbo:originalTitle "O Povo do Abismo";
+	dbo:MediaType "Book";
+	dbo:author dbo:Jack_London;
+	dbo:originalLanguage dbo:Portuguese.
+
+dbo:Jojo_Moyes a dbo:Person;
+	dbo:birthName "Pauline Sara Jo Moyes"; 
+	dbo:startCareer "2002".
+	
+dbo:Kass_Morgan a dbo:Person;
+	dbo:birthName "Kass Morgan"; 
+	dbo:startCareer "2012".
+
+dbo:John_Green a dbo:Person;
+	dbo:birthName "John Green"; 
+	dbo:startCareer "2005".
+	
+dbo:Carlos_Zafón a dbo:Person;
+	dbo:birthName "Carlos Ruiz Zafón";
+	dbo:startCareer "1993";
+	dbo:endCareer "2020".
+
+dbo:William_Blatty a dbo:Person;
+	dbo:birthName "William Peter Blatty";
+	dbo:startCareer "1960";
+	dbo:endCareer "2017".
+	
+dbo:Jack_London a dbo:Person;
+	dbo:birthName "John Griffith Chaney";
+	dbo:startCareer "1876";
+	dbo:endCareer "1916".
+
+dbo:Portuguese a dbo:Language;
+	dbo:LanguageCode "PT".
+	
+dbo:English a dbo:Language;
+	dbo:LanguageCode "EN".
+	
+dbo:INTRINSECA a dbo:Agent.
+
+dbo:Harper a dbo:Agent.
+
+dbo:ASA a dbo:Agent.
