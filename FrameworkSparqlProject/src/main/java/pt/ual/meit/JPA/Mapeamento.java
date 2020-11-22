@@ -112,14 +112,6 @@ public class Mapeamento {
 		this.mapRules = mapRules;
 	}
 
-//	public Classe getClasse() {
-//		return classe;
-//	}
-//
-//	public void setClasse(Classe classe) {
-//		this.classe = classe;
-//	}
-
 	public Classe getClasseTargetId() {
 		return classeTargetId;
 	}

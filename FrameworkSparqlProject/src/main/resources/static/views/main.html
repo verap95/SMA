@@ -9,8 +9,7 @@
 
 <body ng-app="SparqlFramework">
 	<div class="header">
-		<!-- <a href="#" class="logo">CompanyLogo</a> -->
-		<div class="header-left">
+		<div>
 			<h3>Configuração de um novo mapeamento</h3>
 		</div>
 	</div>
@@ -159,13 +158,17 @@
 				</div>
 				<div class="col-md-6" style="text-align: right;">
 					<button type="button" class="btn btn-primary"
-						ng-disabled="form.nameS.$invalid || form.languageS.$invalid || form.nameT.$invalid || form.languageT.$invalid"
+						ng-disabled="nameS == null || languageS == null || nameT == null || languageT == null || fileS.name == null || fileT.name == null "
 						ng-click="saveMapping()">Guardar</button>
 				</div>
 			</div>
 
 		</form>
 	</div>
+	
+	<footer>
+		  <p style="margin:0">Projeto desenvolvido no âmbito da dissertação. <strong>Autor:</strong> Vera Pinheiro</p>
+	</footer>
 </body>
 
 <script src="js/lib/angular.min.js"></script>

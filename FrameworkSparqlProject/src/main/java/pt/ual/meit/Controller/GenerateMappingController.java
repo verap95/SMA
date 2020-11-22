@@ -169,30 +169,6 @@ public class GenerateMappingController {
 			e.printStackTrace();
 		}
 
-		// OutputStream output = null;
-		// try {
-		// output = Files.newOutputStream(outpath, StandardOpenOption.WRITE);
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-		// try {
-		// InputStream fileResource = new FileInputStream("output-model.ttl");
-		//
-		// byte[] base64Bytes = Base64.encodeBase64(IOUtils.toByteArray(fileResource));
-		//
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.add("filename", "output-model.ttl");
-		//
-		// return ResponseEntity.ok().headers(headers).body(base64Bytes);
-		// } catch (IOException e) {
-		// System.out.println("FAILED TO DOWNLOAD");
-		// return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		// }
-		//
-
 		return null;
 
 	}
@@ -213,7 +189,6 @@ public class GenerateMappingController {
 				for (String line : listMapRules) {
 					System.out.print(line);
 					output.write(line.getBytes());
-					// output.write("\n".getBytes());
 				}
 			}
 			output.close();
@@ -260,7 +235,6 @@ public class GenerateMappingController {
 				for (String line : listMapRules) {
 					System.out.print(line);
 					output.write(line.getBytes());
-					// output.write("\n".getBytes());
 				}
 			}
 			output.close();
@@ -315,7 +289,6 @@ public class GenerateMappingController {
 				for (String line : listAMs) {
 					System.out.print(line);
 					output.write(line.getBytes());
-					// output.write("\n".getBytes());
 				}
 			}
 			output.close();

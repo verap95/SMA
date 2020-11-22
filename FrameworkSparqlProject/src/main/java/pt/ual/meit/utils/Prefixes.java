@@ -16,11 +16,6 @@ public class Prefixes {
 
 	public String getPrefixes(String key) {
 		prefix.put("xsd", "<http://www.w3.org/2001/XMLSchema#>");
-//		prefix.put("dbo", "<http://dbpedia.org/ontology/>");
-//		String[] name = key.split(":");
-//		System.out.println("name: " + name);
-//		String p = prefix.get(name[0]);
-//		System.out.println("p: " + p);
 		System.out.println("key: " + key);
 		String p = prefix.get(key);
 		return p;

@@ -14,10 +14,6 @@ import pt.ual.meit.JPA.Propriedades;
 
 @Repository
 public interface MappingRepository extends CrudRepository<Mapeamento, Integer>{
-
-	//List<Mapeamento> deleteByClasse(Classe classe);
-	
-	//List<Mapeamento> findByClasse(Classe classe);
 	
 	List<Mapeamento> findByClasseTargetId(Classe classe);
 	

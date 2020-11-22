@@ -258,3 +258,13 @@ scrollbar-color: #aa66cc #F5F5F5;
 .green{
 	color: #14c309;
 }
+
+footer{
+	text-align: center;
+    background-color: #516abd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    color: white;
+};

@@ -118,20 +118,6 @@ public class SPARQLTemplates {
 			prop = "CONCAT("+temp+")";
 			
 		}
-//		String[] listP = props.split(",");
-//		String p = null;
-//		String temp = null;
-//		if(listP.length >1) {
-//			for(int i=0; i< listP.length; i++) {
-//				if(!temp.isEmpty()) {
-//					temp = temp.concat(",");
-//				}
-//				temp = temp.concat("?A" + i);
-//			}
-//			p = "CONCAT("+temp+")";
-//		}else {
-//			p = "?A1";
-//		}
 		
 		String [] result = {temp, "ENCODE_FOR_URI(" + prop + ")"};
 		return result;

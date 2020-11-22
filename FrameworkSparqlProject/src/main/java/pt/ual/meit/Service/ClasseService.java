@@ -40,17 +40,6 @@ public class ClasseService {
 		Classe classe = classeRepository.findByPrefixAndNameAndOntologyAndFlgAtivo(prefix, name, ontology, true);
 		return classe;
 	}
-	
-//	public Classe findById(Classe c) {
-//		Optional<Classe> classe = classeRepository.findById(id);
-//		Classe classResult;
-//		if(classe.isPresent()) {
-//			classResult = classe.get();
-//		}else {
-//			classResult = null;
-//		}
-//		return classResult;
-//	}
 
 	public List<Classe> findAll() {
 		List<Classe> classe = (List<Classe>) classeRepository.findAll();

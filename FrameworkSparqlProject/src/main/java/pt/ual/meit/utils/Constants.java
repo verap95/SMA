@@ -97,7 +97,6 @@ public final class Constants {
 		HashMap<String, String> listFunction = new HashMap<String, String>();
 		listFunction.put("CONCAT", "concat");
 		listFunction.put("LCASE", "lower-case");
-		//listFunction.put("REPLACE", "replace");
 		return listFunction;
 	}
 	
