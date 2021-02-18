@@ -81,13 +81,11 @@ public class ModuleCMS {
 			
 			if(flgProp) { //Padrão MD2
 				Propriedades propDS1 = propService.findById(input.getP1S());
-				//Falta colocar diferenciacao entre o template T7 e T8 --Para já fica sempre o template T7
-				mapComment = Constants.PADRAO_MD2_T7;
+				
 				prefixExp = ms.getPrefixes(7,input, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), prop, null); //Obtém os prefixos presentes na AM 
 				queryExp = ms.setQueryExp(7, Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getFuncValue() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
 				Propriedades propDS2 = propService.findById(input.getIdS());
 
-//				if(input.getOldFunction()!= null) {
 				if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV1()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV2())) {
 					input.setOldFunction(input.getOldFunction().replace(input.getFuncV1(), "?s"));
 					input.setOldFunction(input.getOldFunction().replace(input.getFuncV2(), "?t"));
@@ -98,21 +96,13 @@ public class ModuleCMS {
 				}else
 					return null;
 				String props = input.getOldFunction().replace("CONCAT(", "");
-				if(input.getFuncValue() != null)
+				if(input.getFuncValue() != null) {
+					mapComment = Constants.PADRAO_MD2_T8;
 					functionExp = input.getFuncValue().replace("v", "?p");
-//				}else {
-//					if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV1()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV2())) {
-//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?s"));
-//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?t"));
-//						
-//					}else if(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()).equals(input.getFuncV2()) && Constants.ATRIBUTOS(propDS2.getPrefix(),propDS2.getName()).equals(input.getFuncV1())) {
-//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV1(), "?t"));
-//						input.setFuncValue(input.getFuncValue().replace(input.getFuncV2(), "?s"));
-//					}else
-//						return null;
-//					props = input.getFuncValue().replace("CONCAT(", "");
-//				}
-				
+				}else {
+					mapComment = Constants.PADRAO_MD2_T7;
+				}
+									
 				if(props.contains("))")){
 					props = props.replace("))", ")");
 				}else {
@@ -120,8 +110,7 @@ public class ModuleCMS {
 				}
 				
 				mapSPARQL = ms.createN1PropertyMapping(prefixExp, input.getNameT(), Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), props, queryExp, functionExp);
-				//mapSPARQL = ms.createN1PropertyMapping(Constants.ATRIBUTOS(propDS1.getPrefix(), propDS1.getName()), input.getNameS(), input.getNameT(), input.getFuncValue());	
-
+				
 			}else if(flgMPC) { //Padrão MD3
 				mapComment = Constants.PADRAO_MD3;
 				prefixExp = ms.getPrefixes(4,input, classeSource, prop, null); //Obtém os prefixos presentes na AM 
@@ -132,11 +121,13 @@ public class ModuleCMS {
 				queryExp = ms.setQueryExp(4, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, false, null, null, null, null);
 				mapSPARQL = ms.createEmbedPropertyMapping(Constants.ATRIBUTOS(propDS.getClasse().getPrefix(), propDS.getClasse().getName()), input.getNameT(), prefixExp, queryExp, uriExp, uriExpProp[0]);	
 			}
-			else{ //Padrão MD1
-				mapComment = Constants.PADRAO_MD1;
+			else{ //Padrão MD1				
 				prefixExp = ms.getPrefixes(6,input, classeSource, prop, null); //Obtém os prefixos presentes na AM 
 				if(input.getOldFunction() != null) {
+					mapComment = Constants.PADRAO_MD1_T6;
 					input.setOldFunction(input.getOldFunction().replace(input.getFuncV1(), "?s"));
+				}else {
+					mapComment = Constants.PADRAO_MD1_T3;
 				}
 				queryExp = ms.setQueryExp(6, null, mapping.getClauseWhere(), mapping.getClauseFilter(), input.getNameS(), flgOP2, input.getOldFunction() == null ? false: true, null, null, null, input.isFlgExpPath() ? Constants.ATRIBUTOS(propDS.getPrefix(), propDS.getName()) : null);
 				if(input.getFilter() != null) {

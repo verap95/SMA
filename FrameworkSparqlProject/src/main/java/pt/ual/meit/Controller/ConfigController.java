@@ -342,7 +342,9 @@ public class ConfigController {
 			String classeS = Constants.ATRIBUTOS(propS.getClasse().getPrefix(), propS.getClasse().getName());
 			
 			if(temp.getP1S() != null && !temp.getP1S().equals(temp.getIdS())){ //Padrão MD2
-				System.out.println("IF correto - Padrão MD2");
+				if(temp.getOldFunction() == null)
+					return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				
 				mapRules = moduleCRM.saveMappingRule(temp, classeS, true, false);
 				mapResult = moduleCMS.saveMapSPARQL(temp, classeS, true, false, temp.getfPO2());
 			}else if(propT.getRangeClasse() != null && mapR.getListProps() != null && !mapR.getListProps().isEmpty()) { //Padrão MO2

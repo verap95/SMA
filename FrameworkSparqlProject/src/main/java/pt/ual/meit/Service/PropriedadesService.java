@@ -24,7 +24,6 @@ public class PropriedadesService {
 
 	public List<Propriedades> findByClassID(Classe classe) {
 		List<Propriedades> list = propriedadesRepository.findByClasse(classe);
-		System.out.println("LIst Propriedades: " + list.size());
 		return list;
 	}
 

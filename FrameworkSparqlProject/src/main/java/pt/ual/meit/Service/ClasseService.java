@@ -30,7 +30,6 @@ public class ClasseService {
 	}
 
 	public List<Classe> findByIDConfig(ConfigOntology config) {
-		System.out.println("Entrei no findByIDConfig do classeRepository");
 		List<Classe> list = classeRepository.findByOntologyAndFlgAtivo(config, true);
 		System.out.println("LIst classe: " + list.size());
 		return list;
@@ -54,7 +53,6 @@ public class ClasseService {
 
 	public void deleteAllClasses() {
 		classeRepository.deleteAll();
-		System.out.println("Delete all classes");
 	}
 
 }

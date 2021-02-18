@@ -187,7 +187,6 @@ public class GenerateMappingController {
 		try {
 			if (!listMapRules.isEmpty()) {
 				for (String line : listMapRules) {
-					System.out.print(line);
 					output.write(line.getBytes());
 				}
 			}
@@ -233,7 +232,6 @@ public class GenerateMappingController {
 		try {
 			if (!listMapRules.isEmpty()) {
 				for (String line : listMapRules) {
-					System.out.print(line);
 					output.write(line.getBytes());
 				}
 			}
@@ -287,7 +285,6 @@ public class GenerateMappingController {
 		try {
 			if (!listAMs.isEmpty()) {
 				for (String line : listAMs) {
-					System.out.print(line);
 					output.write(line.getBytes());
 				}
 			}

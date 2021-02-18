@@ -24,7 +24,6 @@
     	$http.get("http://localhost:8080/configuration/loadOntologyTarget").then(function(response){
     		$scope.loading = false;
     		 var responseData = response.data;
-    		 console.log(responseData);
     		 var options = {
 		    	data: responseData,
 		    	expandIcon: "fa fa-caret-right",
@@ -58,6 +57,7 @@
     		    		$scope.regrasMapeamento = null;
     		    		$scope.properties = null;
     		        	$scope.flgFilter = false;
+    		        	$scope.flgFunction = false;
     		    	});
     		 });
     		 
@@ -78,7 +78,6 @@
     $scope.loadSource = function(){
     	$http.get("http://localhost:8080/configuration/loadOntologySource").then(function(response){
     		var data = response.data;
-    		console.log("Data Source: ", data);
     		$scope.listaS = data;
     		var options = {
     		    	data: data,
@@ -89,7 +88,6 @@
     		$('#treeSource').treeview(options);
         		 
         	$('#treeSource').on('nodeSelected', function(event, data){
-        		console.log(data.psPath);
         		$scope.$apply(function(){
         			$scope.idS = data.id;
         			$scope.nameS = data.text;
@@ -100,10 +98,6 @@
         	});
         	
         	$('#treeSource').on('nodeUnselected', function(event, data){
-        		console.log("IM HERE");
-//        		$scope.$apply(function(){
-//        			$scope.nameS = null;
-//        		});
         	});
     	});
     }
@@ -138,7 +132,6 @@
 	 		$scope.inputMA = response.data.assertive;	
 	 		$scope.pSOld = response.data.p1S;
 	 		$scope.listProps = response.data.listProps;
-	 		console.log("Data from new Assertive: " , response.data);
 	 	});
 		
 		var config1 = {
@@ -155,7 +148,6 @@
     }
     
     $scope.saveMap = function(){
-    	console.log("Save mapping ** $scope.valueFilter: " ,$scope.valueFilter);
     	var requestData = {
     		idT : $scope.idA,
     		nameT: $scope.nameA,
@@ -180,6 +172,7 @@
     	var config = { 
     		headers:{'Content-Type':'application/json'}
     	}
+    	
     	var url = "http://localhost:8080/configuration/saveAssertive";
     	$http.post(url, requestData, config).then(function(response) {
     		var data = response.data;
@@ -189,8 +182,15 @@
     				type: $scope.typeA
     			}
         	}
-    		
+    		$scope.idA = null;
+    		$scope.nameA = null;
+     		$scope.typeA = null;
+     		$scope.idS = null;
+     		$scope.nameS = null;
+     		$scope.typeS = null;
     		$scope.inputMA = null;
+    		$scope.flgFunction = false;
+    		$scope.flgFilter = false;
     		$scope.valueFilter = null;
     		$scope.valueProp = null;
     		$scope.valueFilterS = null;
@@ -203,7 +203,6 @@
     		
         	$http.get("http://localhost:8080/configuration/ontologyTarget/{id}&{type}", config2).then(function(response){
     	 		var dataR = response.data;
-	 			console.log(dataR);
  				$scope.inputMA = dataR.aBasic;
  				$scope.idA = dataR.id;
  				$scope.nameA = dataR.text;
@@ -222,9 +221,7 @@
     			$scope.descError = "Não é possível criar a AMD/AMO sem previamente possuir uma AMC."
     		
     		$('#errorMap').modal('show');
-    		
-    	});
-    	
+    	});    	
     }
     
    $scope.loadMappingSPARQL = function(mapSPARQL, mapRules){
@@ -323,24 +320,14 @@
    }
     
    $scope.applyValue = function(){
-//	   if($scope.valueType != null){
-//		   $scope.valueFilter = $scope.valueProp +  $scope.valueOperator + $scope.value + "^^" + $scope.valueType;
-//		   if($scope.typeS == "C" && $scope.typeA == "C"){
-//			   $scope.valueFilterS = "?o " + $scope.valueOperator + $scope.value + "^^" + $scope.valueType;
-//		   } 
-//	   }else{
-		   $scope.valueFilter = $scope.valueProp + " " + $scope.valueOperator + " " + $scope.value;
-		   $scope.tempValueFilter = $scope.valueFilter;
-		   if($scope.typeS == "C" && $scope.typeA == "C"){
-			   $scope.valueFilterS = "?o " + $scope.valueOperator + " " + $scope.value;
-		   } 
-		   
-		   
-//	   }
+	   $scope.valueFilter = $scope.valueProp + " " + $scope.valueOperator + " " + $scope.value;
+	   $scope.tempValueFilter = $scope.valueFilter;
+	   if($scope.typeS == "C" && $scope.typeA == "C"){
+		   $scope.valueFilterS = "?o " + $scope.valueOperator + " " + $scope.value;
+	   }
    }
    
    $scope.applyValueFunction = function(){
-	   console.log($scope.oldFunction);
 	   if($scope.typeOfFunction == 'String'){
 		   if($scope.prop2 != null){
 			   if($scope.checkboxProp2){
@@ -409,6 +396,7 @@
 			$scope.typeOfFunction = null;
 			$scope.prop2 = null;
 			$scope.prop1 = null;
+			$scope.valueFunc = null;
 	 	});
 		
 		$('#functionModal').modal('hide');
@@ -417,8 +405,6 @@
   }
    
   $scope.getTypeFunction = function(){
-	  console.log("Mudei de opção de função");
-	  console.log("TypeOfFunction: " , $scope.typeOfFunction);
 	  var config = {
 		  params:{
 			  tf: $scope.typeOfFunction
@@ -426,7 +412,6 @@
 	  }
 		  
 	  $http.get("http://localhost:8080/configuration/getTypeFunction", config).then(function(response){
-		  console.log(response.data);
 		  $scope.functionList = response.data;
 	  });
 	  
@@ -434,7 +419,6 @@
   }	
   
   $scope.getPropList = function(a){
-	  console.log("Entrei no getPropList ", $scope.pSOld);
 	  var config = {
 		  params:{
 			  idS: $scope.idS, 
@@ -444,7 +428,6 @@
 	  }
 		  
 	  $http.get("http://localhost:8080/configuration/getPropertiesToList", config).then(function(response){
-		  console.log(response.data);
 		  $scope.propList = response.data;
 	  });
   }

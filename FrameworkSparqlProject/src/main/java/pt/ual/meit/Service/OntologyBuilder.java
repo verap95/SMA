@@ -87,14 +87,12 @@ public class OntologyBuilder {
 					prefixes.setValue(dPrefix, dataTypeProp.getNameSpace());
 					String dpName = dataTypeProp.getLocalName();
 					OntResource dpTypeR = dataTypeProp.getRange();
-					System.out.println("Tipo de Dados: " + dpTypeR.getLocalName());
 					classe = classService.findClasse(cName, cPrefix, ontology);
 					prop = new Propriedades(dpName, dPrefix, "D", classe, null, true);
 					propService.createBasicProperty(prop);
 				}
 			}
 
-			System.out.println("** Listagem das propriedades do tipo Object **");
 			// Lista as propriedades do tipo Object
 			ExtendedIterator<ObjectProperty> objp_ = m.listObjectProperties();
 			while (objp_.hasNext()) {
@@ -102,18 +100,12 @@ public class OntologyBuilder {
 				ExtendedIterator iDomains_ = objectProp.listDomain();
 				while (iDomains_.hasNext()) {
 					OntClass cDomain = (OntClass) iDomains_.next();
-					System.out.println("será aqui ? : " + cDomain.getLocalName() + m.getNsURIPrefix(cDomain.getNameSpace()));
 					classe = classService.findClasse(cDomain.getLocalName(), m.getNsURIPrefix(cDomain.getNameSpace()),
 							ontology);
-					System.out.println("DOMAIN CLASS OBJECT : "+ cDomain.getLocalName());
-					System.out.println("Object Range: " + objectProp.getRange());
 					List<Propriedades> propA = new ArrayList<>();
 					if(objectProp.getRange() != null) {
 						OntResource ont = objectProp.getRange();
-						System.out.println(ont.getLocalName());
-						System.out.println("WTF: " + Constants.ATRIBUTOS(m.getNsURIPrefix(ont.getNameSpace()), ont.getLocalName()));
 						Classe classObj = classService.findClasseByNameAndPrefix(Constants.ATRIBUTOS(m.getNsURIPrefix(ont.getNameSpace()), ont.getLocalName()));
-						System.out.println("ClassObj : " + classObj);
 						if(classObj == null) {
 							Classe rangeClasse = new Classe(ont.getLocalName(), m.getNsURIPrefix(ont.getNameSpace()), ontology, false);
 							//classService.createBasicClass(rangeClasse);
@@ -137,10 +129,6 @@ public class OntologyBuilder {
 						prop = new Propriedades(objectProp.getLocalName(), m.getNsURIPrefix(objectProp.getNameSpace()), "O", classe, null, true);
 					
 					propService.createBasicProperty(prop);
-//					for(Propriedades p : propA) {
-//						Propriedades pa = new Propriedades(p.getName(), p.getPrefix(), p.getType(), p.getClasse(), p.getRangeClasse(), false);
-//						propService.createBasicProperty(pa);
-//					}
 					prefixes.setValue(m.getNsURIPrefix(objectProp.getNameSpace()), objectProp.getNameSpace());
 				}
 			}

@@ -93,15 +93,11 @@ public class MappingService {
 	
 	public List<Mapeamento> findAll() {
 		List<Mapeamento> mapeamentoEntity = (List<Mapeamento>) mappingRepository.findAll();
-		System.out.println("****** Find All ******");
-		System.out.println("size: " + mapeamentoEntity.size());
 		List<Mapeamento> finalM = new ArrayList<>();
 		for(Mapeamento m : mapeamentoEntity) {
 			if(m.getFlgBasic() == false)
 				finalM.add(m);
-		}
-		System.out.println("size finalA: " + finalM.size());
-		
+		}		
 		return finalM;
 	}
 	
@@ -117,7 +113,6 @@ public class MappingService {
 	 * Método para eliminar a assertiva básica 
 	 */
 	public void deleteBasicMapping(Mapeamento m) {
-		System.out.println("Estou a tentar eliminar a linha");
 		mappingRepository.delete(m);
 	}
 

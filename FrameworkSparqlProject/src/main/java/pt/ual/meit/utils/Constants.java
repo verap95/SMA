@@ -26,7 +26,8 @@ public final class Constants {
 	/*
 	 * Padrão MD1 - Mapeamento de Propriedades de Tipos de Dados (Template T6 e T3)
 	*/
-	public static final String PADRAO_MD1 = "# Template T6 – Mapeamento de Propriedade";
+	public static final String PADRAO_MD1_T6 = "# Template T6 – Mapeamento de Propriedade";
+	public static final String PADRAO_MD1_T3 = "# Template T3 – Mapeamento de Propriedade";
 	public static final String TemplateT6 = "PREFIX prefixExp" +
 											"CONSTRUCT { ?SUBJ Pt ?p . } \n"+
 											"WHERE {?SUBJ a Cs ; queryExp \n" +

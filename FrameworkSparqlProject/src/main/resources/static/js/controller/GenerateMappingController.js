@@ -1,7 +1,6 @@
 angular.module('SparqlFramework').controller("GenerateMappingController",function($scope, $http) {
 	
 	$scope.saveForm = function(){
-		console.log("Entrei aqui");
 		var data = new FormData();
 		var file = $scope.fileData;
 		var message = {
@@ -24,10 +23,8 @@ angular.module('SparqlFramework').controller("GenerateMappingController",functio
 		};
 		
 		var url = "http://localhost:8080/generateMapping/saveFinalConfig";
-		$http.post(url, data, config).then(function(data) {			
-			console.log(data);
+		$http.post(url, data, config).then(function(data) {	
 			var filename = data.headers('filename');
-			console.log(filename);
 
 			var file = new Blob([data.data], {type: 'text/html'});
 			
@@ -40,15 +37,8 @@ angular.module('SparqlFramework').controller("GenerateMappingController",functio
             downloadLink.attr('download', filename);
             downloadLink[0].click();
 			
-//			var data = angular.fromJson(response.data);
-//			console.log(data);
-//
-//			console.log(data.allClasses);
-//			$scope.listaT = data.allClasses;
-//			window.location.href = "/configuration";
-
 		}, function errorCallback(response) {
-			alert(response.data.errorMessage);
+			alert("Erro na geração dos triplos RDF");
 		});
 	}
 });

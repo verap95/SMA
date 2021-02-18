@@ -21,7 +21,6 @@ public class ConfigService {
 	}
 
 	public ConfigOntology findById(Integer id) {
-		System.out.println("Entrei aqui antes de rebentar");
 		Optional<ConfigOntology> config = configOntologyRepository.findById(id);
 		ConfigOntology getResult;
 		if (config.isPresent())

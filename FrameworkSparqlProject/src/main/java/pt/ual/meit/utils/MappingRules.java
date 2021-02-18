@@ -63,9 +63,9 @@ public class MappingRules {
 			s = s.concat(path + " / ");
 		}
 		if(oldFunction.contains("))")) {
-			oldFunction = oldFunction.replace("))", "),v)");
+			oldFunction = oldFunction.replace("))", ",v)");
 		}else
-			oldFunction = oldFunction.replace(p2Source, p2Source + "),v");
+			oldFunction = oldFunction.replace(p2Source, p2Source + ",v");
 		
 		oldFunction = oldFunction.replace(p1Source, "v1");
 		oldFunction = oldFunction.replace(p2Source, "v2");
