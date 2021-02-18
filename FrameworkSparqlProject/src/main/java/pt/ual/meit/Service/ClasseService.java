@@ -31,7 +31,6 @@ public class ClasseService {
 
 	public List<Classe> findByIDConfig(ConfigOntology config) {
 		List<Classe> list = classeRepository.findByOntologyAndFlgAtivo(config, true);
-		System.out.println("LIst classe: " + list.size());
 		return list;
 	}
 
